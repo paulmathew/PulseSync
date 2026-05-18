@@ -132,4 +132,23 @@ class RuntimeStateMapperTest {
         assertEquals(1, timelineState.events.size)
         assertEquals("Retry scheduled", timelineState.events.single().title)
     }
+    @Test
+    fun toObservabilityUiState_calculatesSuccessRateAndFailureReasons() {
+        val state = SyncRuntimeState(
+            operations = emptyList(),
+            events = listOf(
+                SyncEngineEvent.OperationSynced("op-1", 1_000),
+                SyncEngineEvent.OperationFailed("op-2", 2_000, SyncFailureReason.Timeout, 3_000),
+                SyncEngineEvent.RetryScheduled("op-2", 2_000, 3_000)
+            ),
+            activeOperationId = null
+        )
+
+        val observabilityState = state.toObservabilityUiState()
+
+        assertEquals("50%", observabilityState.successRateLabel)
+        assertEquals(1, observabilityState.failureCount)
+        assertEquals(1, observabilityState.retryScheduledCount)
+        assertEquals("Timeout", observabilityState.failureReasons.single().label)
+    }
 }
