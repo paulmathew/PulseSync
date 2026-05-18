@@ -37,8 +37,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.paulmathew.pulsesync.model.QueuedOperationStatus
 import com.paulmathew.pulsesync.ui.components.StatusBadge
 import com.paulmathew.pulsesync.ui.components.StatusTone
@@ -46,11 +49,15 @@ import com.paulmathew.pulsesync.ui.theme.PanelBorder
 import com.paulmathew.pulsesync.ui.theme.PanelSurfaceElevated
 
 @Composable
-fun QueueRoute() {
+fun QueueRoute(
+    viewModel: QueueViewModel = viewModel()
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
     QueueScreen(
-        state = QueuePreviewData.defaultState,
-        onFilterSelected = {},
-        onOperationSelected = {}
+        state = state,
+        onFilterSelected = viewModel::onFilterSelected,
+        onOperationSelected = viewModel::onOperationSelected
     )
 }
 

@@ -66,6 +66,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.compose.material.icons.extended)
-
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
 }
