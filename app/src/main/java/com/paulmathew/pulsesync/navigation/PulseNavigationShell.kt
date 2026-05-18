@@ -2,6 +2,7 @@ package com.paulmathew.pulsesync.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Queue
@@ -118,5 +119,11 @@ private enum class PulseTopLevelDestination(
         route = PulseRoute.NetworkSimulation,
         label = "Network",
         icon = Icons.Outlined.SettingsEthernet
+    ),
+    Observability(
+        route = PulseRoute.Observability,
+        label = "Observe",
+        icon = Icons.Outlined.Analytics
     )
 }
+

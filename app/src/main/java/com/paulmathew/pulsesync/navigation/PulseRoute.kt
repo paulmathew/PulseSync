@@ -11,4 +11,7 @@ sealed class PulseRoute(
     data object Queue : PulseRoute("queue")
 
     data object NetworkSimulation : PulseRoute("network_simulation")
+
+    data object Observability : PulseRoute("observability")
+
 }
