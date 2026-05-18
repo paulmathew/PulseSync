@@ -10,6 +10,13 @@ data class QueuedOperation(
     val nextRetryLabel: String? = null
 )
 
+val QueuedOperationMethod.label: String
+    get() = when (this) {
+        QueuedOperationMethod.Post -> "POST"
+        com.paulmathew.pulsesync.model.QueuedOperationMethod.Put -> "PUT"
+        com.paulmathew.pulsesync.model.QueuedOperationMethod.Delete -> "DELETE"
+    }
+
 enum class QueuedOperationMethod {
     Post,
     Put,
