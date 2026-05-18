@@ -32,13 +32,17 @@ import com.paulmathew.pulsesync.ui.theme.PanelSurface
 @Composable
 fun TimelineRoute() {
     TimelineScreen(
-        state = TimelinePreviewData.defaultState
+        state = TimelinePreviewData.defaultState,
+        onFilterSelected = {
+            // State owner will be introduced when timeline filtering becomes interactive.
+        }
     )
 }
 
 @Composable
 fun TimelineScreen(
     state: TimelineUiState,
+    onFilterSelected: (TimelineFilter) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -53,7 +57,8 @@ fun TimelineScreen(
 
         TimelineFilterStrip(
             filters = state.filters,
-            selectedFilter = state.selectedFilter
+            selectedFilter = state.selectedFilter,
+            onFilterSelected = onFilterSelected
         )
 
         TimelineEventList(
@@ -82,7 +87,9 @@ private fun TimelineHeader() {
 @Composable
 private fun TimelineFilterStrip(
     filters: List<TimelineFilter>,
-    selectedFilter: TimelineFilter
+    selectedFilter: TimelineFilter,
+    onFilterSelected: (TimelineFilter) -> Unit
+
 ) {
 
     Row(
@@ -93,7 +100,9 @@ private fun TimelineFilterStrip(
     ) {
         filters.forEach { filter ->
             FilterChip(
-                selected = filter == selectedFilter, onClick = {
+                selected = filter == selectedFilter,
+                onClick = {
+                    onFilterSelected(filter)
 
                 },
                 label = {
@@ -137,7 +146,8 @@ private fun TimelineEventList(
 private fun TimelineScreenPreview() {
     PulseSyncTheme {
         TimelineScreen(
-            state = TimelinePreviewData.defaultState
+            state = TimelinePreviewData.defaultState,
+            onFilterSelected = {}
         )
     }
 }
