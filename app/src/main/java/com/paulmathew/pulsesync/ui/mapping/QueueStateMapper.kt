@@ -22,8 +22,8 @@ fun SyncRuntimeState.toQueueUiState(
             QueueFilter.Failed
         ),
         operations = operations
-            .filter { it.status.toQueuedStatusOrNull() != null }
-            .map { it.toQueuedOperation() }
+            .mapNotNull { it.toQueuedOperationOrNull() }
+            .filter { it.matches(selectedFilter) }
     )
 }
 
@@ -72,4 +72,26 @@ private fun Long.toTimestampLabel(): String {
     val seconds = totalSeconds % 60
 
     return "%02d:%02d".format(minutes, seconds)
+}
+private fun SyncOperation.toQueuedOperationOrNull(): QueuedOperation? {
+    val queuedStatus = status.toQueuedStatusOrNull() ?: return null
+
+    return QueuedOperation(
+        operationId = id,
+        method = method.toQueuedOperationMethod(),
+        resourcePath = resourcePath,
+        enqueuedAt = createdAtMillis.toRuntimeTimestampLabel(),
+        status = queuedStatus,
+        attemptCount = attemptCount,
+        nextRetryLabel = status.nextRetryLabel()
+    )
+}
+
+private fun QueuedOperation.matches(filter: QueueFilter): Boolean {
+    return when (filter) {
+        QueueFilter.All -> true
+        QueueFilter.Pending -> status == QueuedOperationStatus.Pending
+        QueueFilter.Syncing -> status == QueuedOperationStatus.Syncing
+        QueueFilter.Failed -> status == QueuedOperationStatus.Failed
+    }
 }

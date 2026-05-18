@@ -9,6 +9,8 @@ import com.paulmathew.pulsesync.sync.SyncOperation
 import com.paulmathew.pulsesync.sync.SyncOperationMethod
 import com.paulmathew.pulsesync.sync.SyncOperationStatus
 import com.paulmathew.pulsesync.sync.runtime.SyncRuntimeState
+import com.paulmathew.pulsesync.ui.queue.QueueFilter
+import com.paulmathew.pulsesync.ui.timeline.TimelineFilter
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -89,5 +91,45 @@ class RuntimeStateMapperTest {
             attemptCount = 0,
             status = status
         )
+    }
+    @Test
+    fun toQueueUiState_filtersFailedOperations() {
+        val state = SyncRuntimeState(
+            operations = listOf(
+                operation("pending", SyncOperationStatus.Pending),
+                operation("failed", SyncOperationStatus.Failed(SyncFailureReason.Timeout, 10_000)),
+                operation("syncing", SyncOperationStatus.InFlight)
+            ),
+            events = emptyList(),
+            activeOperationId = null
+        )
+
+        val queueState = state.toQueueUiState(selectedFilter = QueueFilter.Failed)
+
+        assertEquals(1, queueState.operations.size)
+        assertEquals(QueuedOperationStatus.Failed, queueState.operations.single().status)
+    }
+    @Test
+    fun toTimelineUiState_filtersRetryEvents() {
+        val state = SyncRuntimeState(
+            operations = emptyList(),
+            events = listOf(
+                SyncEngineEvent.OperationStarted(
+                    operationId = "op-1",
+                    occurredAtMillis = 1_000
+                ),
+                SyncEngineEvent.RetryScheduled(
+                    operationId = "op-1",
+                    occurredAtMillis = 2_000,
+                    nextRetryAtMillis = 5_000
+                )
+            ),
+            activeOperationId = null
+        )
+
+        val timelineState = state.toTimelineUiState(selectedFilter = TimelineFilter.Retry)
+
+        assertEquals(1, timelineState.events.size)
+        assertEquals("Retry scheduled", timelineState.events.single().title)
     }
 }
