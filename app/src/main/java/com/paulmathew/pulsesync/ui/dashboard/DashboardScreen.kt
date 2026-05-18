@@ -42,13 +42,19 @@ fun DashboardRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     DashboardScreen(
-        state = state
+        state = state,
+        onStartNextSync = viewModel::onStartNextSync,
+        onCompleteActiveAsSuccess = viewModel::onCompleteActiveAsSuccess,
+        onCompleteActiveAsTimeout = viewModel::onCompleteActiveAsTimeout
     )
 }
 
 @Composable
 fun DashboardScreen(
     state: DashboardUiState,
+    onStartNextSync: () -> Unit,
+    onCompleteActiveAsSuccess: () -> Unit,
+    onCompleteActiveAsTimeout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -179,7 +185,10 @@ private fun RecentEventsPanel(
 private fun DashboardScreenPreview() {
     PulseSyncTheme {
         DashboardScreen(
-            state = DashboardPreviewData.healthyState
+            state = DashboardPreviewData.healthyState,
+            onStartNextSync = {},
+            onCompleteActiveAsSuccess = {},
+            onCompleteActiveAsTimeout = {}
         )
     }
 }
@@ -193,7 +202,10 @@ private fun DashboardScreenPreview() {
 private fun DashboardHealthyPreview() {
     PulseSyncTheme {
         DashboardScreen(
-            state = DashboardPreviewData.healthyState
+            state = DashboardPreviewData.healthyState,
+            onStartNextSync = {},
+            onCompleteActiveAsSuccess = {},
+            onCompleteActiveAsTimeout = {}
         )
     }
 }
@@ -207,7 +219,10 @@ private fun DashboardHealthyPreview() {
 private fun DashboardDegradedPreview() {
     PulseSyncTheme {
         DashboardScreen(
-            state = DashboardPreviewData.degradedState
+            state = DashboardPreviewData.healthyState,
+            onStartNextSync = {},
+            onCompleteActiveAsSuccess = {},
+            onCompleteActiveAsTimeout = {}
         )
     }
 }
@@ -221,7 +236,11 @@ private fun DashboardDegradedPreview() {
 private fun DashboardFailureHeavyPreview() {
     PulseSyncTheme {
         DashboardScreen(
-            state = DashboardPreviewData.failureHeavyState
+            state = DashboardPreviewData.failureHeavyState,
+            onStartNextSync = {},
+            onCompleteActiveAsSuccess = {},
+            onCompleteActiveAsTimeout = {}
+
         )
     }
 }
