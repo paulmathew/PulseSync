@@ -5,6 +5,7 @@ import androidx.navigation.NavHost
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.paulmathew.pulsesync.ui.dashboard.DashboardRoute
 
 
 @Composable
@@ -17,7 +18,7 @@ fun PulseNavGraph(){
         startDestination = PulseRoute.Dashboard.route
     ){
         composable(PulseRoute.Dashboard.route) {
-            //DashboardRoute()
+            DashboardRoute()
         }
 
         composable(PulseRoute.Timeline.route) {
