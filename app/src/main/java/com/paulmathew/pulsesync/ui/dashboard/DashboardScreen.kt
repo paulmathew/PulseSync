@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +36,11 @@ import com.paulmathew.pulsesync.ui.theme.GraphiteBackground
 import com.paulmathew.pulsesync.ui.theme.PulseSyncTheme
 import com.paulmathew.pulsesync.ui.theme.TextPrimary
 import com.paulmathew.pulsesync.ui.theme.TextSecondary
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import com.paulmathew.pulsesync.ui.theme.OperationalGreen
+import com.paulmathew.pulsesync.ui.theme.FailureRed
+import com.paulmathew.pulsesync.ui.theme.WarningAmber
 
 @Composable
 fun DashboardRoute(
@@ -42,13 +49,19 @@ fun DashboardRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     DashboardScreen(
-        state = state
+        state = state,
+        onStartNextSync = viewModel::onStartNextSync,
+        onCompleteActiveAsSuccess = viewModel::onCompleteActiveAsSuccess,
+        onCompleteActiveAsTimeout = viewModel::onCompleteActiveAsTimeout
     )
 }
 
 @Composable
 fun DashboardScreen(
     state: DashboardUiState,
+    onStartNextSync: () -> Unit,
+    onCompleteActiveAsSuccess: () -> Unit,
+    onCompleteActiveAsTimeout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -56,6 +69,7 @@ fun DashboardScreen(
             .fillMaxSize()
             .background(GraphiteBackground)
             .statusBarsPadding()
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
 
@@ -72,6 +86,12 @@ fun DashboardScreen(
         OverallStatusPanel(state = state)
 
         MetricStrip(state = state)
+
+        DashboardRuntimeControls(
+            onStartNextSync = onStartNextSync,
+            onCompleteActiveAsSuccess = onCompleteActiveAsSuccess,
+            onCompleteActiveAsTimeout = onCompleteActiveAsTimeout
+        )
 
         RecentEventsPanel(state = state)
     }
@@ -179,7 +199,10 @@ private fun RecentEventsPanel(
 private fun DashboardScreenPreview() {
     PulseSyncTheme {
         DashboardScreen(
-            state = DashboardPreviewData.healthyState
+            state = DashboardPreviewData.healthyState,
+            onStartNextSync = {},
+            onCompleteActiveAsSuccess = {},
+            onCompleteActiveAsTimeout = {}
         )
     }
 }
@@ -193,11 +216,68 @@ private fun DashboardScreenPreview() {
 private fun DashboardHealthyPreview() {
     PulseSyncTheme {
         DashboardScreen(
-            state = DashboardPreviewData.healthyState
+            state = DashboardPreviewData.healthyState,
+            onStartNextSync = {},
+            onCompleteActiveAsSuccess = {},
+            onCompleteActiveAsTimeout = {}
         )
     }
 }
 
+@Composable
+private fun DashboardRuntimeControls(
+    onStartNextSync: () -> Unit,
+    onCompleteActiveAsSuccess: () -> Unit,
+    onCompleteActiveAsTimeout: () -> Unit
+) {
+    OperationalPanel {
+        Text(
+            text = "Runtime Controls",
+            color = TextPrimary,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(
+                modifier = Modifier.weight(1f),
+                onClick = onStartNextSync,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = OperationalGreen,
+                    contentColor = GraphiteBackground
+                )
+            ) {
+                Text(text = "Start")
+            }
+
+            Button(
+                modifier = Modifier.weight(1f),
+                onClick = onCompleteActiveAsSuccess,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = OperationalGreen,
+                    contentColor = GraphiteBackground
+                )
+            ) {
+                Text(text = "Success")
+            }
+
+            Button(
+                modifier = Modifier.weight(1f),
+                onClick = onCompleteActiveAsTimeout,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = FailureRed,
+                    contentColor = TextPrimary
+                )
+            ) {
+                Text(text = "Timeout")
+            }
+        }
+    }
+}
 @Preview(
     name = "Dashboard - Degraded",
     showBackground = true,
@@ -207,7 +287,10 @@ private fun DashboardHealthyPreview() {
 private fun DashboardDegradedPreview() {
     PulseSyncTheme {
         DashboardScreen(
-            state = DashboardPreviewData.degradedState
+            state = DashboardPreviewData.healthyState,
+            onStartNextSync = {},
+            onCompleteActiveAsSuccess = {},
+            onCompleteActiveAsTimeout = {}
         )
     }
 }
@@ -221,7 +304,11 @@ private fun DashboardDegradedPreview() {
 private fun DashboardFailureHeavyPreview() {
     PulseSyncTheme {
         DashboardScreen(
-            state = DashboardPreviewData.failureHeavyState
+            state = DashboardPreviewData.failureHeavyState,
+            onStartNextSync = {},
+            onCompleteActiveAsSuccess = {},
+            onCompleteActiveAsTimeout = {}
+
         )
     }
 }
