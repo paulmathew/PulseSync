@@ -19,6 +19,15 @@ import com.paulmathew.pulsesync.ui.theme.GraphiteBackground
 import com.paulmathew.pulsesync.ui.theme.PulseSyncTheme
 import com.paulmathew.pulsesync.ui.theme.TextPrimary
 import com.paulmathew.pulsesync.ui.theme.TextSecondary
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import com.paulmathew.pulsesync.ui.theme.OperationalGreen
+import com.paulmathew.pulsesync.ui.theme.PanelBorder
+import com.paulmathew.pulsesync.ui.theme.PanelSurface
 
 @Composable
 fun TimelineRoute() {
@@ -76,6 +85,36 @@ private fun TimelineFilterStrip(
     selectedFilter: TimelineFilter
 ) {
 
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        filters.forEach { filter ->
+            FilterChip(
+                selected = filter == selectedFilter, onClick = {
+
+                },
+                label = {
+                    Text(text = filter.label)
+
+                },
+                colors = FilterChipDefaults.filterChipColors(
+                    containerColor = PanelSurface,
+                    labelColor = TextSecondary,
+                    selectedContainerColor = OperationalGreen,
+                    selectedLabelColor = GraphiteBackground
+                ),
+                border = FilterChipDefaults.filterChipBorder(
+                    enabled = true,
+                    selected = filter == selectedFilter,
+                    borderColor = PanelBorder,
+                    selectedBorderColor = OperationalGreen
+                )
+            )
+        }
+    }
 }
 
 @Composable

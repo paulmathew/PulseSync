@@ -15,3 +15,11 @@ enum class TimelineFilter {
     Error,
     Conflict
 }
+val TimelineFilter.label: String
+    get() = when (this) {
+        TimelineFilter.All -> "All"
+        TimelineFilter.Sync -> "Sync"
+        TimelineFilter.Retry -> "Retry"
+        TimelineFilter.Error -> "Error"
+        TimelineFilter.Conflict -> "Conflict"
+    }
