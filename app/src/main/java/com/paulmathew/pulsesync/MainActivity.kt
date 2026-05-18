@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.paulmathew.pulsesync.navigation.PulseNavGraph
+import com.paulmathew.pulsesync.navigation.PulseNavigationShell
 import com.paulmathew.pulsesync.ui.theme.PulseSyncTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PulseSyncTheme {
-                PulseNavGraph()
+                PulseNavigationShell()
             }
         }
     }
