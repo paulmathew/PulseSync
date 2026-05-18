@@ -54,12 +54,66 @@ fun DashboardScreen(
     }
 }
 
+@Composable
+private fun DashboardTopBar(){}
+
+@Composable
+private fun OverallStatusPanel(){}
+
+@Composable
+private fun MetricStrip(){}
+
+@Composable
+private fun RecentEventsPanel(){}
+
 @Preview(showBackground = true)
 @Composable
 private fun DashboardScreenPreview() {
     PulseSyncTheme {
         DashboardScreen(
             state = DashboardPreviewData.healthyState
+        )
+    }
+}
+
+@Preview(
+    name = "Dashboard - Healthy",
+    showBackground = true,
+    backgroundColor = 0xFF0D1117
+)
+@Composable
+private fun DashboardHealthyPreview() {
+    PulseSyncTheme {
+        DashboardScreen(
+            state = DashboardPreviewData.healthyState
+        )
+    }
+}
+
+@Preview(
+    name = "Dashboard - Degraded",
+    showBackground = true,
+    backgroundColor = 0xFF0D1117
+)
+@Composable
+private fun DashboardDegradedPreview() {
+    PulseSyncTheme {
+        DashboardScreen(
+            state = DashboardPreviewData.degradedState
+        )
+    }
+}
+
+@Preview(
+    name = "Dashboard - Failure Heavy",
+    showBackground = true,
+    backgroundColor = 0xFF0D1117
+)
+@Composable
+private fun DashboardFailureHeavyPreview() {
+    PulseSyncTheme {
+        DashboardScreen(
+            state = DashboardPreviewData.failureHeavyState
         )
     }
 }
