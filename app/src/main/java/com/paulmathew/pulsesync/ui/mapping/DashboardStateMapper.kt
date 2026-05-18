@@ -34,7 +34,9 @@ fun SyncRuntimeState.toDashboardUiState(): DashboardUiState {
             SyncMetric("Failed", failedCount.toString(), OperationStatus.Failed),
             SyncMetric("Synced", syncedCount.toString(), OperationStatus.Synced)
         ),
-        recentEvents = emptyList(),
+        recentEvents = events.takeLast(4)
+            .map { it.toSyncTimelineEvent() }
+            .asReversed(),
         lastSyncLabel = "Not available",
         nextAttemptLabel = "Not scheduled"
     )

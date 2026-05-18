@@ -24,7 +24,7 @@ fun SyncRuntimeState.toTimelineUiState(
     )
 }
 
-private fun SyncEngineEvent.toSyncTimelineEvent(): SyncTimelineEvent {
+internal fun SyncEngineEvent.toSyncTimelineEvent(): SyncTimelineEvent {
     return when (this) {
         is SyncEngineEvent.OperationStarted -> SyncTimelineEvent(
             timestamp = occurredAtMillis.toTimestampLabel(),
