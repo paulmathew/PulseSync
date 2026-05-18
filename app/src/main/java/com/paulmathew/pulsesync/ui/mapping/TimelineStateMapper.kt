@@ -20,7 +20,9 @@ fun SyncRuntimeState.toTimelineUiState(
             TimelineFilter.Error,
             TimelineFilter.Conflict
         ),
-        events = events.map { it.toSyncTimelineEvent() }
+        events = events
+            .filter { it.matches(selectedFilter) }
+            .map { it.toSyncTimelineEvent() }
     )
 }
 
@@ -81,4 +83,16 @@ private fun Long.toTimestampLabel(): String {
     val seconds = totalSeconds % 60
 
     return "%02d:%02d".format(minutes, seconds)
+}
+private fun SyncEngineEvent.matches(filter: TimelineFilter): Boolean {
+    return when (filter) {
+        TimelineFilter.All -> true
+        TimelineFilter.Sync -> this is SyncEngineEvent.OperationStarted ||
+                this is SyncEngineEvent.OperationSynced
+        TimelineFilter.Retry -> this is SyncEngineEvent.RetryScheduled
+        TimelineFilter.Error -> this is SyncEngineEvent.OperationFailed &&
+                reason != SyncFailureReason.Conflict
+        TimelineFilter.Conflict -> this is SyncEngineEvent.OperationFailed &&
+                reason == SyncFailureReason.Conflict
+    }
 }
