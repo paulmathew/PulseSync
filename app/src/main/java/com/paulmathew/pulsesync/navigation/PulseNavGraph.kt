@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.paulmathew.pulsesync.ui.dashboard.DashboardRoute
+import com.paulmathew.pulsesync.ui.timeline.TimelineRoute
 
 
 @Composable
@@ -22,7 +23,7 @@ fun PulseNavGraph(){
         }
 
         composable(PulseRoute.Timeline.route) {
-            // Coming in next feature branch
+            TimelineRoute()
         }
 
         composable(PulseRoute.Queue.route) {
