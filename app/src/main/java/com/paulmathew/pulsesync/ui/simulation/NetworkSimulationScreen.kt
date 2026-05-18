@@ -19,6 +19,26 @@ import com.paulmathew.pulsesync.ui.theme.GraphiteBackground
 import com.paulmathew.pulsesync.ui.theme.PulseSyncTheme
 import com.paulmathew.pulsesync.ui.theme.TextPrimary
 import com.paulmathew.pulsesync.ui.theme.TextSecondary
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.Alignment
+import com.paulmathew.pulsesync.model.NetworkProfileType
+import com.paulmathew.pulsesync.model.symbol
+import com.paulmathew.pulsesync.model.toStatusTone
+import com.paulmathew.pulsesync.ui.components.StatusTone
+import com.paulmathew.pulsesync.ui.components.color
+import com.paulmathew.pulsesync.ui.theme.OperationalGreen
+import com.paulmathew.pulsesync.ui.theme.PanelBorder
+import com.paulmathew.pulsesync.ui.theme.PanelSurfaceElevated
 
 @Composable
 fun NetworkSimulationRoute() {
@@ -87,12 +107,22 @@ private fun NetworkProfileSection(
     selectedProfile: NetworkProfile,
     onProfileSelected: (NetworkProfile) -> Unit
 ) {
-    OperationalPanel {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         Text(
             text = "Network Profile",
             color = TextPrimary,
             fontWeight = FontWeight.SemiBold
         )
+
+        profiles.forEach { profile ->
+            NetworkProfileRow(
+                profile = profile,
+                selected = profile == selectedProfile,
+                onProfileSelected = onProfileSelected
+            )
+        }
     }
 }
 
@@ -106,23 +136,148 @@ private fun CustomSettingsSection(
             color = TextPrimary,
             fontWeight = FontWeight.SemiBold
         )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            SettingTile(
+                label = "Latency",
+                value = "${settings.latencyMs} ms",
+                modifier = Modifier.weight(1f)
+            )
+
+            SettingTile(
+                label = "Packet Loss",
+                value = "${settings.packetLossPercent}%",
+                modifier = Modifier.weight(1f)
+            )
+
+            SettingTile(
+                label = "Timeout",
+                value = settings.timeoutLabel,
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
+@Composable
+private fun SettingTile(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .background(
+                color = PanelSurfaceElevated,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .border(
+                border = BorderStroke(1.dp, PanelBorder),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(12.dp)
+    ) {
+        Text(
+            text = label,
+            color = TextSecondary
+        )
 
+        Text(
+            text = value,
+            color = TextPrimary,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
 @Composable
 private fun SimulationActionSection(
     selectedProfile: NetworkProfile,
     isSimulationRunning: Boolean,
     onStartSimulation: () -> Unit
 ) {
-    OperationalPanel {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onStartSimulation,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = OperationalGreen,
+                contentColor = GraphiteBackground
+            )
+        ) {
+            Text(
+                text = if (isSimulationRunning) "Stop Simulation" else "Start Simulation",
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
         Text(
             text = "Current: ${selectedProfile.name}",
-            color = TextSecondary
+            color = OperationalGreen
         )
     }
 }
+@Composable
+private fun NetworkProfileRow(
+    profile: NetworkProfile,
+    selected: Boolean,
+    onProfileSelected: (NetworkProfile) -> Unit
+) {
+    val tone = profile.type.toStatusTone()
+    val borderColor = if (selected) OperationalGreen else PanelBorder
 
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onProfileSelected(profile) }
+            .background(
+                color = PanelSurfaceElevated,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .border(
+                border = BorderStroke(1.dp, borderColor),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = profile.type.symbol,
+            color = tone.color(),
+            fontSize = 18.sp
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = profile.name,
+                color = TextPrimary,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            Text(
+                text = profile.description,
+                color = TextSecondary
+            )
+        }
+
+        if (selected) {
+            Text(
+                text = "ACTIVE",
+                color = OperationalGreen,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
 @Preview(
     name = "Network Simulation",
     showBackground = true,
