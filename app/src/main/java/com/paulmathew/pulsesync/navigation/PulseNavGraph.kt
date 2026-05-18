@@ -1,7 +1,9 @@
 package com.paulmathew.pulsesync.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -11,14 +13,16 @@ import com.paulmathew.pulsesync.ui.timeline.TimelineRoute
 
 
 @Composable
-fun PulseNavGraph(){
+fun PulseNavGraph(
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
 
-    val navController = rememberNavController()
-
-    NavHost (
-        navController=navController,
-        startDestination = PulseRoute.Dashboard.route
-    ){
+    NavHost(
+        navController = navController,
+        startDestination = PulseRoute.Dashboard.route,
+        modifier = modifier
+    ) {
         composable(PulseRoute.Dashboard.route) {
             DashboardRoute()
         }
