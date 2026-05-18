@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.paulmathew.pulsesync.ui.theme.GraphiteBackground
+import com.paulmathew.pulsesync.ui.theme.PulseSyncTheme
 import com.paulmathew.pulsesync.ui.theme.TextPrimary
 
 @Composable
@@ -48,6 +50,16 @@ fun DashboardScreen(
         Text(
             text = state.healthLabel,
             color = TextPrimary
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DashboardScreenPreview() {
+    PulseSyncTheme {
+        DashboardScreen(
+            state = DashboardPreviewData.healthyState
         )
     }
 }
