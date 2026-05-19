@@ -359,3 +359,38 @@ private val ConflictResolutionStrategyUi.label: String
         ConflictResolutionStrategyUi.Merge -> "Merge"
         ConflictResolutionStrategyUi.ManualReview -> "Manual Review"
     }
+
+@Preview(
+    name = "Conflict Resolution - Empty",
+    showBackground = true,
+    backgroundColor = 0xFF0D1117
+)
+@Composable
+private fun ConflictResolutionEmptyPreview() {
+    PulseSyncTheme {
+        ConflictResolutionScreen(
+            state = ConflictPreviewData.emptyState,
+            onConflictSelected = {},
+            onStrategySelected = {},
+            onResolveSelectedConflict = {},
+            onSelectionCleared = {}
+        )
+    }
+}
+@Preview(
+    name = "Conflict Resolution - Selected",
+    showBackground = true,
+    backgroundColor = 0xFF0D1117
+)
+@Composable
+private fun ConflictResolutionSelectedPreview() {
+    PulseSyncTheme {
+        ConflictResolutionScreen(
+            state = ConflictPreviewData.selectedConflictState,
+            onConflictSelected = {},
+            onStrategySelected = {},
+            onResolveSelectedConflict = {},
+            onSelectionCleared = {}
+        )
+    }
+}
