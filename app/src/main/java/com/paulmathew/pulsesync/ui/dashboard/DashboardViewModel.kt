@@ -48,4 +48,10 @@ class DashboardViewModel @Inject constructor(
             nowMillis = System.currentTimeMillis()
         )
     }
+    fun onCompleteActiveAsConflict() {
+        orchestrator.completeActive(
+            result = SyncAttemptResult.Failure(SyncFailureReason.Conflict),
+            nowMillis = System.currentTimeMillis()
+        )
+    }
 }
