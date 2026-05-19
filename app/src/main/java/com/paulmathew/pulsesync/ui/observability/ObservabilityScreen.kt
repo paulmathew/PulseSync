@@ -54,6 +54,12 @@ fun ObservabilityScreen(
 
         MetricGrid(state = state)
 
+
+        if (state.totalEvents == 0) {
+            EmptyTelemetryPanel()
+        }
+
+
         FailureReasonsPanel(
             failureReasons = state.failureReasons
         )
@@ -168,6 +174,22 @@ private fun FailureReasonsPanel(
     }
 }
 
+@Composable
+private fun EmptyTelemetryPanel() {
+    OperationalPanel {
+        Text(
+            text = "No runtime telemetry recorded",
+            color = TextPrimary,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 8.dp),
+            text = "Start a sync operation from Dashboard to generate observability events",
+            color = TextSecondary
+        )
+    }
+}
 @Preview(
     name = "Observability",
     showBackground = true,
