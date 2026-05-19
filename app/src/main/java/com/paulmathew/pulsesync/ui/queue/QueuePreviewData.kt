@@ -56,6 +56,13 @@ object QueuePreviewData {
                 status = QueuedOperationStatus.Pending,
                 attemptCount = 0
             )
-        )
+        ),
+        selectedOperation = null
+
+    )
+    val failedOperationSelectedState = defaultState.copy(
+        selectedOperation = defaultState.operations.first {
+            it.status == QueuedOperationStatus.Failed
+        }
     )
 }

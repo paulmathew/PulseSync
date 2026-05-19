@@ -26,6 +26,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.runtime.getValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.paulmathew.pulsesync.ui.theme.OperationalGreen
@@ -34,7 +35,7 @@ import com.paulmathew.pulsesync.ui.theme.PanelSurface
 
 @Composable
 fun TimelineRoute(
-    viewModel: TimelineViewModel = viewModel()
+    viewModel: TimelineViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 

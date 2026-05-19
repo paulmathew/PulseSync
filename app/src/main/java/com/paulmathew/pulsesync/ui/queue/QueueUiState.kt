@@ -5,7 +5,9 @@ import com.paulmathew.pulsesync.model.QueuedOperation
 data class QueueUiState(
     val selectedFilter: QueueFilter,
     val filters: List<QueueFilter>,
-    val operations: List<QueuedOperation>
+    val operations: List<QueuedOperation>,
+    val selectedOperation: QueuedOperation?
+
 )
 
 enum class QueueFilter {

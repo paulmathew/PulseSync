@@ -20,12 +20,17 @@ class QueueViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val selectedFilter = MutableStateFlow(QueueFilter.All)
+    private val selectedOperationId = MutableStateFlow<String?>(null)
+
 
     val uiState: StateFlow<QueueUiState> = combine(
         orchestrator.state,
-        selectedFilter
-    ) { runtimeState, filter ->
-        runtimeState.toQueueUiState(selectedFilter = filter)
+        selectedFilter,
+        selectedOperationId
+    ) { runtimeState, filter, operationId ->
+        runtimeState.toQueueUiState(
+            selectedFilter = filter, selectedOperationId = operationId
+        )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -37,6 +42,9 @@ class QueueViewModel @Inject constructor(
     }
 
     fun onOperationSelected(operation: QueuedOperation) {
-        // Selection/details will be introduced with an operation inspector.
+        selectedOperationId.value = operation.operationId
+    }
+    fun onInspectorDismissed() {
+        selectedOperationId.value = null
     }
 }
