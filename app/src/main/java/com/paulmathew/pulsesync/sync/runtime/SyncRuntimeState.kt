@@ -8,7 +8,8 @@ data class SyncRuntimeState(
     val operations: List<SyncOperation>,
     val events: List<SyncEngineEvent>,
     val activeOperationId: String?,
-    val conflicts: List<SyncConflict>
+    val conflicts: List<SyncConflict>,
+    val networkSimulation: NetworkSimulationRuntimeState,
 
 ) {
     companion object {
@@ -17,6 +18,7 @@ data class SyncRuntimeState(
             events = emptyList(),
             activeOperationId = null,
             conflicts = emptyList(),
-            )
+            networkSimulation = NetworkSimulationRuntimeState.Default,
+        )
     }
 }

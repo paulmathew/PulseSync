@@ -8,6 +8,7 @@ import com.paulmathew.pulsesync.sync.SyncFailureReason
 import com.paulmathew.pulsesync.sync.SyncOperation
 import com.paulmathew.pulsesync.sync.SyncOperationMethod
 import com.paulmathew.pulsesync.sync.SyncOperationStatus
+import com.paulmathew.pulsesync.sync.runtime.NetworkSimulationRuntimeState
 import com.paulmathew.pulsesync.sync.runtime.SyncRuntimeState
 import com.paulmathew.pulsesync.ui.queue.QueueFilter
 import com.paulmathew.pulsesync.ui.timeline.TimelineFilter
@@ -29,7 +30,9 @@ class RuntimeStateMapperTest {
             events = emptyList(),
             activeOperationId = "syncing",
             conflicts = emptyList(),
-            )
+            networkSimulation = NetworkSimulationRuntimeState.Default
+
+        )
 
         val dashboardState = state.toDashboardUiState()
 
@@ -54,6 +57,8 @@ class RuntimeStateMapperTest {
             ),
             activeOperationId = null,
             conflicts = emptyList(),
+            networkSimulation = NetworkSimulationRuntimeState.Default
+
 
         )
 
@@ -74,6 +79,8 @@ class RuntimeStateMapperTest {
             events = emptyList(),
             activeOperationId = null,
             conflicts = emptyList(),
+            networkSimulation = NetworkSimulationRuntimeState.Default
+
         )
 
         val queueState = state.toQueueUiState()
@@ -107,6 +114,8 @@ class RuntimeStateMapperTest {
             events = emptyList(),
             activeOperationId = null,
             conflicts = emptyList(),
+            networkSimulation = NetworkSimulationRuntimeState.Default
+
         )
 
         val queueState = state.toQueueUiState(selectedFilter = QueueFilter.Failed)
@@ -131,6 +140,8 @@ class RuntimeStateMapperTest {
             ),
             activeOperationId = null,
             conflicts = emptyList(),
+            networkSimulation = NetworkSimulationRuntimeState.Default
+
         )
 
         val timelineState = state.toTimelineUiState(selectedFilter = TimelineFilter.Retry)
@@ -149,6 +160,8 @@ class RuntimeStateMapperTest {
             ),
             activeOperationId = null,
             conflicts = emptyList(),
+            networkSimulation = NetworkSimulationRuntimeState.Default
+
         )
 
         val observabilityState = state.toObservabilityUiState()

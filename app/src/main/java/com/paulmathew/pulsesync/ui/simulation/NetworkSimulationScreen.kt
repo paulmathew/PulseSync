@@ -30,7 +30,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.paulmathew.pulsesync.model.NetworkProfileType
 import com.paulmathew.pulsesync.model.symbol
 import com.paulmathew.pulsesync.model.toStatusTone
@@ -41,14 +44,17 @@ import com.paulmathew.pulsesync.ui.theme.PanelBorder
 import com.paulmathew.pulsesync.ui.theme.PanelSurfaceElevated
 
 @Composable
-fun NetworkSimulationRoute() {
+fun NetworkSimulationRoute(
+    viewModel: NetworkSimulationViewModel = hiltViewModel()
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
     NetworkSimulationScreen(
-        state = NetworkSimulationPreviewData.defaultState,
-        onProfileSelected = {},
-        onStartSimulation = {}
+        state = state,
+        onProfileSelected = viewModel::onProfileSelected,
+        onStartSimulation = viewModel::onSimulationToggleRequested
     )
 }
-
 @Composable
 fun NetworkSimulationScreen(
     state: NetworkSimulationUiState,

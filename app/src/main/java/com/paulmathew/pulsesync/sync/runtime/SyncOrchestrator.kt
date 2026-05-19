@@ -1,5 +1,6 @@
 package com.paulmathew.pulsesync.sync.runtime
 
+import com.paulmathew.pulsesync.model.NetworkProfile
 import com.paulmathew.pulsesync.sync.SyncAttemptResult
 import com.paulmathew.pulsesync.sync.SyncOperation
 import com.paulmathew.pulsesync.sync.conflict.ConflictResolutionResult
@@ -22,4 +23,8 @@ interface SyncOrchestrator {
         strategy: ConflictResolutionStrategy,
         resolvedAtMillis: Long
     ): ConflictResolutionResult?
+
+    fun selectNetworkProfile(profile: NetworkProfile)
+
+    fun setNetworkSimulationRunning(isRunning: Boolean)
 }

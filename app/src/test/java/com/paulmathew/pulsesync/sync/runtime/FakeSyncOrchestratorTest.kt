@@ -1,5 +1,6 @@
 package com.paulmathew.pulsesync.sync.runtime
 
+import com.paulmathew.pulsesync.model.NetworkProfileType
 import com.paulmathew.pulsesync.sync.RetryPolicy
 import com.paulmathew.pulsesync.sync.SyncAttemptResult
 import com.paulmathew.pulsesync.sync.SyncFailureReason
@@ -262,5 +263,16 @@ class FakeSyncOrchestratorTest {
             attemptCount = 0,
             status = SyncOperationStatus.Pending
         )
+    }
+    @Test
+    fun selectNetworkProfile_updatesRuntimeNetworkProfile() {
+        val orchestrator = FakeSyncOrchestrator()
+        val profile = NetworkProfiles.all.first {
+            it.type == NetworkProfileType.Timeout
+        }
+
+        orchestrator.selectNetworkProfile(profile)
+
+        assertEquals(profile, orchestrator.state.value.networkSimulation.selectedProfile)
     }
 }

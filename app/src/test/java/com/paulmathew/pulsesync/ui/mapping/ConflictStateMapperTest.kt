@@ -1,7 +1,10 @@
 package com.paulmathew.pulsesync.ui.mapping
 
+import com.paulmathew.pulsesync.model.NetworkProfileType
 import com.paulmathew.pulsesync.sync.conflict.ConflictingVersion
 import com.paulmathew.pulsesync.sync.conflict.SyncConflict
+import com.paulmathew.pulsesync.sync.runtime.NetworkProfiles
+import com.paulmathew.pulsesync.sync.runtime.NetworkSimulationRuntimeState
 import com.paulmathew.pulsesync.sync.runtime.SyncRuntimeState
 import com.paulmathew.pulsesync.ui.conflict.ConflictResolutionStrategyUi
 import org.junit.Assert.assertEquals
@@ -100,5 +103,20 @@ class ConflictStateMapperTest {
         
         assertNotNull(uiState.selectedConflict)
         assertEquals(ConflictResolutionStrategyUi.LocalWins, uiState.selectedConflict?.selectedStrategy)
+    }
+    @Test
+    fun toNetworkSimulationUiState_mapsSelectedProfileSettings() {
+        val state = SyncRuntimeState.Empty.copy(
+            networkSimulation = NetworkSimulationRuntimeState.Default.copy(
+                selectedProfile = NetworkProfiles.all.first {
+                    it.type == NetworkProfileType.Timeout
+                }
+            )
+        )
+
+        val uiState = state.toNetworkSimulationUiState()
+
+        assertEquals("Timeout", uiState.selectedProfile.name)
+        assertEquals("10s", uiState.customSettings.timeoutLabel)
     }
 }
