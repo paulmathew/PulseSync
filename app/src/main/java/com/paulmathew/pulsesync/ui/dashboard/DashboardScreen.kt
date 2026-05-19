@@ -190,8 +190,15 @@ private fun RecentEventsPanel(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        state.recentEvents.forEach { event ->
-            TimelineEventRow(event = event)
+        if (state.recentEvents.isEmpty()) {
+            Text(
+                text = "No runtime events recorded",
+                color = TextSecondary
+            )
+        } else {
+            state.recentEvents.forEach { event ->
+                TimelineEventRow(event = event)
+            }
         }
     }
 }
@@ -240,7 +247,7 @@ private fun DashboardRuntimeControls(
                     contentColor = GraphiteBackground
                 )
             ) {
-                Text(text = "Apply Network")
+                Text(text = "Network")
             }
 
             Button(

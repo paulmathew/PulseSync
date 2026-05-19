@@ -116,10 +116,19 @@ private fun ConflictHeader() {
 
 @Composable
 private fun EmptyConflictState() {
-    Text(
-        text = "No active conflicts",
-        color = TextSecondary
-    )
+    OperationalPanel {
+        Text(
+            text = "No active conflicts",
+            color = TextPrimary,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 8.dp),
+            text = "Divergent local and remote versions will appear here when detected",
+            color = TextSecondary
+        )
+    }
 }
 
 @Composable

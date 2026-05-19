@@ -165,6 +165,21 @@ private fun QueueOperationList(
     operations: List<QueuedOperation>,
     onOperationSelected: (QueuedOperation) -> Unit
 ) {
+    if(operations.isEmpty())
+        OperationalPanel {
+            Text(
+                text = "No queued operations",
+                color = TextPrimary,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            Text(
+                modifier = Modifier.padding(top = 8.dp),
+                text = "Pending, syncing, and failed operations will appear here",
+                color = TextSecondary
+            )
+        }
+    else
     OperationalPanel {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)

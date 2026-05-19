@@ -137,8 +137,15 @@ private fun TimelineEventList(
     state: TimelineUiState
 ) {
     OperationalPanel {
-        state.events.forEach { event ->
-            TimelineEventRow(event = event)
+        if (state.events.isEmpty()) {
+            Text(
+                text = "No timeline events match the selected filter",
+                color = TextSecondary
+            )
+        } else {
+            state.events.forEach { event ->
+                TimelineEventRow(event = event)
+            }
         }
     }
 }
