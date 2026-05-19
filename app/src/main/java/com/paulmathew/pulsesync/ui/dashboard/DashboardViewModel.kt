@@ -44,4 +44,19 @@ class DashboardViewModel @Inject constructor(
             nowMillis = System.currentTimeMillis()
         )
     }
+    fun onCompleteActiveFromNetworkProfile() {
+        val profile = orchestrator.state.value.networkSimulation.selectedProfile
+
+        val result = when {
+            profile.isOffline -> SyncAttemptResult.Failure(SyncFailureReason.Offline)
+            profile.timeoutMs != null -> SyncAttemptResult.Failure(SyncFailureReason.Timeout)
+            profile.packetLossPercent >= 20 -> SyncAttemptResult.Failure(SyncFailureReason.ServerUnavailable)
+            else -> SyncAttemptResult.Success
+        }
+
+        orchestrator.completeActive(
+            result = result,
+            nowMillis = System.currentTimeMillis()
+        )
+    }
 }

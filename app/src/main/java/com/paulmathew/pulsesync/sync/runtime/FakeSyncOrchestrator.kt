@@ -1,5 +1,6 @@
 package com.paulmathew.pulsesync.sync.runtime
 
+import com.paulmathew.pulsesync.model.NetworkProfile
 import com.paulmathew.pulsesync.sync.RetryPolicy
 import com.paulmathew.pulsesync.sync.SyncAttemptResult
 import com.paulmathew.pulsesync.sync.SyncEngineEvent
@@ -146,6 +147,26 @@ class FakeSyncOrchestrator(
         }
 
         return result
+    }
+
+    override fun selectNetworkProfile(profile: NetworkProfile) {
+        _state.update { current ->
+            current.copy(
+                networkSimulation = current.networkSimulation.copy(
+                    selectedProfile = profile
+                )
+            )
+        }
+    }
+
+    override fun setNetworkSimulationRunning(isRunning: Boolean) {
+        _state.update { current ->
+            current.copy(
+                networkSimulation = current.networkSimulation.copy(
+                    isSimulationRunning = isRunning
+                )
+            )
+        }
     }
     private fun List<SyncOperation>.replaceOperation(
         operation: SyncOperation
