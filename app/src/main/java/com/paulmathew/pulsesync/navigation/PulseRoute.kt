@@ -14,4 +14,7 @@ sealed class PulseRoute(
 
     data object Observability : PulseRoute("observability")
 
+    data object Conflicts : PulseRoute("conflicts")
+
+
 }

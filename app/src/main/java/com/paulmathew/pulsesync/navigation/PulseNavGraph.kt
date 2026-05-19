@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.paulmathew.pulsesync.ui.conflict.ConflictResolutionRoute
 import com.paulmathew.pulsesync.ui.dashboard.DashboardRoute
 import com.paulmathew.pulsesync.ui.observability.ObservabilityRoute
 import com.paulmathew.pulsesync.ui.queue.QueueRoute
@@ -43,6 +44,9 @@ fun PulseNavGraph(
 
         composable(PulseRoute.Observability.route) {
             ObservabilityRoute()
+        }
+        composable(PulseRoute.Conflicts.route) {
+            ConflictResolutionRoute()
         }
     }
 }

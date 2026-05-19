@@ -6,6 +6,7 @@ import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Queue
+import androidx.compose.material.icons.outlined.ReportProblem
 import androidx.compose.material.icons.outlined.SettingsEthernet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -124,6 +125,12 @@ private enum class PulseTopLevelDestination(
         route = PulseRoute.Observability,
         label = "Observe",
         icon = Icons.Outlined.Analytics
-    )
+    ),
+    Conflicts(
+        route = PulseRoute.Conflicts,
+        label = "Conflicts",
+        icon = Icons.Outlined.ReportProblem
+    ),
+
 }
 
