@@ -34,9 +34,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
@@ -58,7 +61,8 @@ fun QueueRoute(
     QueueScreen(
         state = state,
         onFilterSelected = viewModel::onFilterSelected,
-        onOperationSelected = viewModel::onOperationSelected
+        onOperationSelected = viewModel::onOperationSelected,
+        onInspectorDismissed = viewModel::onInspectorDismissed
     )
 }
 
@@ -67,6 +71,7 @@ fun QueueScreen(
     state: QueueUiState,
     onFilterSelected: (QueueFilter) -> Unit,
     onOperationSelected: (QueuedOperation) -> Unit,
+    onInspectorDismissed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -74,7 +79,9 @@ fun QueueScreen(
             .fillMaxSize()
             .background(GraphiteBackground)
             .statusBarsPadding()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
+        ,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         QueueHeader()
@@ -89,6 +96,12 @@ fun QueueScreen(
             operations = state.operations,
             onOperationSelected = onOperationSelected
         )
+        state.selectedOperation?.let { operation ->
+            OperationInspectorPanel(
+                operation = operation,
+                onDismiss = onInspectorDismissed
+            )
+        }
     }
 }
 
@@ -232,7 +245,90 @@ private fun QueuedOperationStatus.toStatusTone(): StatusTone {
         QueuedOperationStatus.Failed -> StatusTone.Error
     }
 }
+@Composable
+private fun OperationInspectorPanel(
+    operation: QueuedOperation,
+    onDismiss: () -> Unit
+) {
+    OperationalPanel {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Operation Inspector",
+                color = TextPrimary,
+                fontWeight = FontWeight.SemiBold
+            )
 
+            TextButton(onClick = onDismiss) {
+                Text(
+                    text = "Close",
+                    color = TextSecondary
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        InspectorField(
+            label = "Operation ID",
+            value = operation.operationId
+        )
+
+        InspectorField(
+            label = "Method",
+            value = operation.method.name.uppercase()
+        )
+
+        InspectorField(
+            label = "Resource",
+            value = operation.resourcePath
+        )
+
+        InspectorField(
+            label = "Status",
+            value = operation.status.name.uppercase()
+        )
+
+        InspectorField(
+            label = "Attempts",
+            value = operation.attemptCount.toString()
+        )
+
+        operation.nextRetryLabel?.let { retry ->
+            InspectorField(
+                label = "Next Retry",
+                value = retry
+            )
+        }
+    }
+}
+
+@Composable
+private fun InspectorField(
+    label: String,
+    value: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            color = TextSecondary
+        )
+
+        Text(
+            text = value,
+            color = TextPrimary,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
 @Preview(
     name = "Queue",
     showBackground = true,
@@ -244,7 +340,8 @@ private fun QueueScreenPreview() {
         QueueScreen(
             state = QueuePreviewData.defaultState,
             onFilterSelected = {},
-            onOperationSelected = {}
+            onOperationSelected = {},
+            onInspectorDismissed = {}
         )
     }
 }
