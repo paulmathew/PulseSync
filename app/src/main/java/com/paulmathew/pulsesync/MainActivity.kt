@@ -14,7 +14,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.paulmathew.pulsesync.navigation.PulseNavGraph
 import com.paulmathew.pulsesync.navigation.PulseNavigationShell
 import com.paulmathew.pulsesync.ui.theme.PulseSyncTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
