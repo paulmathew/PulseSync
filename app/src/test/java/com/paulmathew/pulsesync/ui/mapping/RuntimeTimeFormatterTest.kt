@@ -27,8 +27,9 @@ class RuntimeStateMapperTest {
                 operation("synced", SyncOperationStatus.Synced)
             ),
             events = emptyList(),
-            activeOperationId = "syncing"
-        )
+            activeOperationId = "syncing",
+            conflicts = emptyList(),
+            )
 
         val dashboardState = state.toDashboardUiState()
 
@@ -51,7 +52,9 @@ class RuntimeStateMapperTest {
                     nextRetryAtMillis = 2_000
                 )
             ),
-            activeOperationId = null
+            activeOperationId = null,
+            conflicts = emptyList(),
+
         )
 
         val timelineState = state.toTimelineUiState()
@@ -69,7 +72,8 @@ class RuntimeStateMapperTest {
                 operation("cancelled", SyncOperationStatus.Cancelled)
             ),
             events = emptyList(),
-            activeOperationId = null
+            activeOperationId = null,
+            conflicts = emptyList(),
         )
 
         val queueState = state.toQueueUiState()
@@ -101,7 +105,8 @@ class RuntimeStateMapperTest {
                 operation("syncing", SyncOperationStatus.InFlight)
             ),
             events = emptyList(),
-            activeOperationId = null
+            activeOperationId = null,
+            conflicts = emptyList(),
         )
 
         val queueState = state.toQueueUiState(selectedFilter = QueueFilter.Failed)
@@ -124,7 +129,8 @@ class RuntimeStateMapperTest {
                     nextRetryAtMillis = 5_000
                 )
             ),
-            activeOperationId = null
+            activeOperationId = null,
+            conflicts = emptyList(),
         )
 
         val timelineState = state.toTimelineUiState(selectedFilter = TimelineFilter.Retry)
@@ -141,7 +147,8 @@ class RuntimeStateMapperTest {
                 SyncEngineEvent.OperationFailed("op-2", 2_000, SyncFailureReason.Timeout, 3_000),
                 SyncEngineEvent.RetryScheduled("op-2", 2_000, 3_000)
             ),
-            activeOperationId = null
+            activeOperationId = null,
+            conflicts = emptyList(),
         )
 
         val observabilityState = state.toObservabilityUiState()

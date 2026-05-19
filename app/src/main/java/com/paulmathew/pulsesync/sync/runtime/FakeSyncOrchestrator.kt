@@ -3,9 +3,15 @@ package com.paulmathew.pulsesync.sync.runtime
 import com.paulmathew.pulsesync.sync.RetryPolicy
 import com.paulmathew.pulsesync.sync.SyncAttemptResult
 import com.paulmathew.pulsesync.sync.SyncEngineEvent
+import com.paulmathew.pulsesync.sync.SyncFailureReason
 import com.paulmathew.pulsesync.sync.SyncOperation
 import com.paulmathew.pulsesync.sync.SyncOperationStatus
 import com.paulmathew.pulsesync.sync.SyncStateReducer
+import com.paulmathew.pulsesync.sync.conflict.ConflictResolutionResult
+import com.paulmathew.pulsesync.sync.conflict.ConflictResolutionStrategy
+import com.paulmathew.pulsesync.sync.conflict.ConflictResolver
+import com.paulmathew.pulsesync.sync.conflict.ConflictingVersion
+import com.paulmathew.pulsesync.sync.conflict.SyncConflict
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -66,6 +72,16 @@ class FakeSyncOrchestrator(
                 retryPolicy = retryPolicy,
                 nowMillis = nowMillis
             )
+            val createdConflict = when (result) {
+                is SyncAttemptResult.Failure -> {
+                    if (result.reason == SyncFailureReason.Conflict) {
+                        activeOperation.toConflict(detectedAtMillis = nowMillis)
+                    } else {
+                        null
+                    }
+                }
+                SyncAttemptResult.Success -> null
+            }
 
             val events = buildList {
                 addAll(current.events)
@@ -87,16 +103,76 @@ class FakeSyncOrchestrator(
             current.copy(
                 operations = current.operations.replaceOperation(transition.next),
                 events = events,
-                activeOperationId = null
+                activeOperationId = null,
+                conflicts = if (createdConflict != null) {
+                    current.conflicts
+                        .filterNot { it.operationId == createdConflict.operationId } + createdConflict
+                } else {
+                    current.conflicts
+                }
             )
         }
     }
 
+    override fun resolveConflict(
+        operationId: String,
+        strategy: ConflictResolutionStrategy,
+        resolvedAtMillis: Long
+    ): ConflictResolutionResult? {
+        var result: ConflictResolutionResult? = null
+
+        _state.update { current ->
+            val conflict = current.conflicts.firstOrNull {
+                it.operationId == operationId
+            } ?: return@update current
+
+            val resolutionResult = ConflictResolver.resolve(
+                conflict = conflict,
+                strategy = strategy,
+                resolvedAtMillis = resolvedAtMillis
+            )
+
+            result = resolutionResult
+
+            when (resolutionResult) {
+                is ConflictResolutionResult.Resolved -> current.copy(
+                    conflicts = current.conflicts.filterNot {
+                        it.operationId == operationId
+                    }
+                )
+
+                is ConflictResolutionResult.RequiresManualReview -> current
+            }
+        }
+
+        return result
+    }
     private fun List<SyncOperation>.replaceOperation(
         operation: SyncOperation
     ): List<SyncOperation> {
         return map { existing ->
             if (existing.id == operation.id) operation else existing
         }
+    }
+    private fun SyncOperation.toConflict(
+        detectedAtMillis: Long
+    ): SyncConflict {
+        return SyncConflict(
+            operationId = id,
+            resourcePath = resourcePath,
+            detectedAtMillis = detectedAtMillis,
+            localVersion = ConflictingVersion(
+                versionId = "local-$id",
+                updatedAtMillis = createdAtMillis,
+                payloadHash = payloadHash,
+                summary = "Local pending mutation for $resourcePath"
+            ),
+            remoteVersion = ConflictingVersion(
+                versionId = "remote-$id",
+                updatedAtMillis = detectedAtMillis,
+                payloadHash = "remote-$payloadHash",
+                summary = "Remote version already changed for $resourcePath"
+            )
+        )
     }
 }

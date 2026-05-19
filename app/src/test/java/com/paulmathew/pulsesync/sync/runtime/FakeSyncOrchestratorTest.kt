@@ -6,6 +6,8 @@ import com.paulmathew.pulsesync.sync.SyncFailureReason
 import com.paulmathew.pulsesync.sync.SyncOperation
 import com.paulmathew.pulsesync.sync.SyncOperationMethod
 import com.paulmathew.pulsesync.sync.SyncOperationStatus
+import com.paulmathew.pulsesync.sync.conflict.ConflictResolutionResult
+import com.paulmathew.pulsesync.sync.conflict.ConflictResolutionStrategy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -32,6 +34,22 @@ class FakeSyncOrchestratorTest {
         val operation = orchestrator.state.value.operations.single()
         assertEquals(SyncOperationStatus.InFlight, operation.status)
         assertEquals("op-1", orchestrator.state.value.activeOperationId)
+    }
+
+    @Test
+    fun startNext_doesNothingWhenOperationAlreadyActive() {
+        val orchestrator = FakeSyncOrchestrator()
+        orchestrator.enqueue(pendingOperation("op-1"))
+        orchestrator.enqueue(pendingOperation("op-2"))
+
+        orchestrator.startNext(nowMillis = 1_000)
+        orchestrator.startNext(nowMillis = 2_000)
+
+        assertEquals("op-1", orchestrator.state.value.activeOperationId)
+        assertEquals(
+            SyncOperationStatus.Pending,
+            orchestrator.state.value.operations.first { it.id == "op-2" }.status
+        )
     }
 
     @Test
@@ -75,9 +93,16 @@ class FakeSyncOrchestratorTest {
 
     @Test
     fun startNext_doesNotRetryFailedOperationBeforeRetryTime() {
-        val orchestrator = FakeSyncOrchestrator()
+        val orchestrator = FakeSyncOrchestrator(
+            retryPolicy = RetryPolicy(
+                maxAttempts = 3,
+                baseDelayMillis = 1_000,
+                maxDelayMillis = 30_000
+            )
+        )
         orchestrator.enqueue(pendingOperation("op-1"))
         orchestrator.startNext(nowMillis = 1_000)
+
         orchestrator.completeActive(
             result = SyncAttemptResult.Failure(SyncFailureReason.Timeout),
             nowMillis = 2_000
@@ -89,34 +114,142 @@ class FakeSyncOrchestratorTest {
     }
 
     @Test
-    fun startNext_retriesFailedOperationAfterRetryTime() {
-        val orchestrator = FakeSyncOrchestrator()
+    fun startNext_retriesFailedOperationAtRetryTime() {
+        val orchestrator = FakeSyncOrchestrator(
+            retryPolicy = RetryPolicy(
+                maxAttempts = 3,
+                baseDelayMillis = 1_000,
+                maxDelayMillis = 30_000
+            )
+        )
         orchestrator.enqueue(pendingOperation("op-1"))
         orchestrator.startNext(nowMillis = 1_000)
+
         orchestrator.completeActive(
             result = SyncAttemptResult.Failure(SyncFailureReason.Timeout),
             nowMillis = 2_000
         )
 
-        // nextRetryAtMillis will be 4_000 (2_000 + 2_000 backoff)
-        orchestrator.startNext(nowMillis = 4_500)
+        orchestrator.startNext(nowMillis = 4_000)
 
         assertEquals("op-1", orchestrator.state.value.activeOperationId)
-        assertEquals(SyncOperationStatus.InFlight, orchestrator.state.value.operations.single().status)
+        assertEquals(
+            SyncOperationStatus.InFlight,
+            orchestrator.state.value.operations.single().status
+        )
     }
 
     @Test
-    fun startNext_doesNotStartMultipleOperationsInParallel() {
+    fun completeActive_conflictFailureAddsRuntimeConflict() {
         val orchestrator = FakeSyncOrchestrator()
         orchestrator.enqueue(pendingOperation("op-1"))
-        orchestrator.enqueue(pendingOperation("op-2"))
-
         orchestrator.startNext(nowMillis = 1_000)
-        assertEquals("op-1", orchestrator.state.value.activeOperationId)
 
-        orchestrator.startNext(nowMillis = 1_500)
-        assertEquals("op-1", orchestrator.state.value.activeOperationId)
-        assertEquals(SyncOperationStatus.Pending, orchestrator.state.value.operations[1].status)
+        orchestrator.completeActive(
+            result = SyncAttemptResult.Failure(SyncFailureReason.Conflict),
+            nowMillis = 2_000
+        )
+
+        assertEquals(1, orchestrator.state.value.conflicts.size)
+        assertEquals("op-1", orchestrator.state.value.conflicts.single().operationId)
+    }
+
+    @Test
+    fun completeActive_duplicateConflictFailureReplacesExistingConflict() {
+        val orchestrator = FakeSyncOrchestrator()
+        orchestrator.enqueue(pendingOperation("op-1"))
+        orchestrator.startNext(nowMillis = 1_000)
+
+        orchestrator.completeActive(
+            result = SyncAttemptResult.Failure(SyncFailureReason.Conflict),
+            nowMillis = 2_000
+        )
+
+        orchestrator.startNext(nowMillis = 4_000)
+
+        orchestrator.completeActive(
+            result = SyncAttemptResult.Failure(SyncFailureReason.Conflict),
+            nowMillis = 5_000
+        )
+
+        assertEquals(1, orchestrator.state.value.conflicts.size)
+        assertEquals(5_000, orchestrator.state.value.conflicts.single().detectedAtMillis)
+    }
+
+    @Test
+    fun resolveConflict_localWinsRemovesConflict() {
+        val orchestrator = FakeSyncOrchestrator()
+        orchestrator.enqueue(pendingOperation("op-1"))
+        orchestrator.startNext(nowMillis = 1_000)
+
+        orchestrator.completeActive(
+            result = SyncAttemptResult.Failure(SyncFailureReason.Conflict),
+            nowMillis = 2_000
+        )
+
+        val result = orchestrator.resolveConflict(
+            operationId = "op-1",
+            strategy = ConflictResolutionStrategy.LocalWins,
+            resolvedAtMillis = 3_000
+        )
+
+        assertTrue(result is ConflictResolutionResult.Resolved)
+        assertTrue(orchestrator.state.value.conflicts.isEmpty())
+    }
+
+    @Test
+    fun resolveConflict_remoteWinsRemovesConflict() {
+        val orchestrator = FakeSyncOrchestrator()
+        orchestrator.enqueue(pendingOperation("op-1"))
+        orchestrator.startNext(nowMillis = 1_000)
+
+        orchestrator.completeActive(
+            result = SyncAttemptResult.Failure(SyncFailureReason.Conflict),
+            nowMillis = 2_000
+        )
+
+        val result = orchestrator.resolveConflict(
+            operationId = "op-1",
+            strategy = ConflictResolutionStrategy.RemoteWins,
+            resolvedAtMillis = 3_000
+        )
+
+        assertTrue(result is ConflictResolutionResult.Resolved)
+        assertTrue(orchestrator.state.value.conflicts.isEmpty())
+    }
+
+    @Test
+    fun resolveConflict_manualReviewKeepsConflictActive() {
+        val orchestrator = FakeSyncOrchestrator()
+        orchestrator.enqueue(pendingOperation("op-1"))
+        orchestrator.startNext(nowMillis = 1_000)
+
+        orchestrator.completeActive(
+            result = SyncAttemptResult.Failure(SyncFailureReason.Conflict),
+            nowMillis = 2_000
+        )
+
+        val result = orchestrator.resolveConflict(
+            operationId = "op-1",
+            strategy = ConflictResolutionStrategy.ManualReview,
+            resolvedAtMillis = 3_000
+        )
+
+        assertTrue(result is ConflictResolutionResult.RequiresManualReview)
+        assertEquals(1, orchestrator.state.value.conflicts.size)
+    }
+
+    @Test
+    fun resolveConflict_returnsNullWhenConflictDoesNotExist() {
+        val orchestrator = FakeSyncOrchestrator()
+
+        val result = orchestrator.resolveConflict(
+            operationId = "missing",
+            strategy = ConflictResolutionStrategy.LocalWins,
+            resolvedAtMillis = 3_000
+        )
+
+        assertNull(result)
     }
 
     private fun pendingOperation(id: String): SyncOperation {
