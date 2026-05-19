@@ -2,6 +2,8 @@ package com.paulmathew.pulsesync.sync.runtime
 
 import com.paulmathew.pulsesync.sync.SyncAttemptResult
 import com.paulmathew.pulsesync.sync.SyncOperation
+import com.paulmathew.pulsesync.sync.conflict.ConflictResolutionResult
+import com.paulmathew.pulsesync.sync.conflict.ConflictResolutionStrategy
 import kotlinx.coroutines.flow.StateFlow
 
 interface SyncOrchestrator {
@@ -15,4 +17,9 @@ interface SyncOrchestrator {
         result: SyncAttemptResult,
         nowMillis: Long
     )
+    fun resolveConflict(
+        operationId: String,
+        strategy: ConflictResolutionStrategy,
+        resolvedAtMillis: Long
+    ): ConflictResolutionResult?
 }
