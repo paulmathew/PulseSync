@@ -275,4 +275,23 @@ class FakeSyncOrchestratorTest {
 
         assertEquals(profile, orchestrator.state.value.networkSimulation.selectedProfile)
     }
+    @Test
+    fun completeActiveUsingNetworkProfile_usesSelectedTimeoutProfile() {
+        val orchestrator = FakeSyncOrchestrator()
+        val timeoutProfile = NetworkProfiles.all.first {
+            it.type == NetworkProfileType.Timeout
+        }
+
+        orchestrator.selectNetworkProfile(timeoutProfile)
+        orchestrator.enqueue(pendingOperation("op-1"))
+        orchestrator.startNext(nowMillis = 1_000)
+
+        orchestrator.completeActiveUsingNetworkProfile(nowMillis = 2_000)
+
+        val status = orchestrator.state.value.operations.single().status
+        assertTrue(status is SyncOperationStatus.Failed)
+
+        status as SyncOperationStatus.Failed
+        assertEquals(SyncFailureReason.Timeout, status.reason)
+    }
 }

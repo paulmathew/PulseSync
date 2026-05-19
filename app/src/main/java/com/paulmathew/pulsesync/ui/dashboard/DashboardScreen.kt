@@ -53,7 +53,8 @@ fun DashboardRoute(
         state = state,
         onStartNextSync = viewModel::onStartNextSync,
         onCompleteActiveAsSuccess = viewModel::onCompleteActiveAsSuccess,
-        onCompleteActiveAsTimeout = viewModel::onCompleteActiveAsTimeout
+        onCompleteActiveAsTimeout = viewModel::onCompleteActiveAsTimeout,
+        onCompleteActiveUsingNetworkProfile = viewModel::onCompleteActiveUsingNetworkProfile,
     )
 }
 
@@ -63,6 +64,7 @@ fun DashboardScreen(
     onStartNextSync: () -> Unit,
     onCompleteActiveAsSuccess: () -> Unit,
     onCompleteActiveAsTimeout: () -> Unit,
+    onCompleteActiveUsingNetworkProfile: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -90,7 +92,7 @@ fun DashboardScreen(
 
         DashboardRuntimeControls(
             onStartNextSync = onStartNextSync,
-            onCompleteActiveAsSuccess = onCompleteActiveAsSuccess,
+            onCompleteActiveAsSuccess = onCompleteActiveUsingNetworkProfile,
             onCompleteActiveAsTimeout = onCompleteActiveAsTimeout
         )
 
@@ -203,7 +205,9 @@ private fun DashboardScreenPreview() {
             state = DashboardPreviewData.healthyState,
             onStartNextSync = {},
             onCompleteActiveAsSuccess = {},
-            onCompleteActiveAsTimeout = {}
+            onCompleteActiveAsTimeout = {},
+            onCompleteActiveUsingNetworkProfile = {}
+
         )
     }
 }
@@ -220,7 +224,9 @@ private fun DashboardHealthyPreview() {
             state = DashboardPreviewData.healthyState,
             onStartNextSync = {},
             onCompleteActiveAsSuccess = {},
-            onCompleteActiveAsTimeout = {}
+            onCompleteActiveAsTimeout = {},
+            onCompleteActiveUsingNetworkProfile = {}
+
         )
     }
 }
@@ -259,11 +265,11 @@ private fun DashboardRuntimeControls(
                 modifier = Modifier.weight(1f),
                 onClick = onCompleteActiveAsSuccess,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = OperationalGreen,
+                    containerColor = WarningAmber,
                     contentColor = GraphiteBackground
                 )
             ) {
-                Text(text = "Success")
+                Text(text = "Apply Network")
             }
 
             Button(
@@ -291,7 +297,8 @@ private fun DashboardDegradedPreview() {
             state = DashboardPreviewData.healthyState,
             onStartNextSync = {},
             onCompleteActiveAsSuccess = {},
-            onCompleteActiveAsTimeout = {}
+            onCompleteActiveAsTimeout = {},
+            onCompleteActiveUsingNetworkProfile = {}
         )
     }
 }
@@ -308,7 +315,9 @@ private fun DashboardFailureHeavyPreview() {
             state = DashboardPreviewData.failureHeavyState,
             onStartNextSync = {},
             onCompleteActiveAsSuccess = {},
-            onCompleteActiveAsTimeout = {}
+            onCompleteActiveAsTimeout = {},
+            onCompleteActiveUsingNetworkProfile = {}
+
 
         )
     }

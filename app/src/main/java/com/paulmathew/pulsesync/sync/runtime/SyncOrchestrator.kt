@@ -27,4 +27,6 @@ interface SyncOrchestrator {
     fun selectNetworkProfile(profile: NetworkProfile)
 
     fun setNetworkSimulationRunning(isRunning: Boolean)
+
+    fun completeActiveUsingNetworkProfile(nowMillis: Long)
 }

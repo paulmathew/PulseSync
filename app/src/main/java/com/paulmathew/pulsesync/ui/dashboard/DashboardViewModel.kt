@@ -59,4 +59,9 @@ class DashboardViewModel @Inject constructor(
             nowMillis = System.currentTimeMillis()
         )
     }
+    fun onCompleteActiveUsingNetworkProfile() {
+        orchestrator.completeActiveUsingNetworkProfile(
+            nowMillis = System.currentTimeMillis()
+        )
+    }
 }
