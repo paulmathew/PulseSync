@@ -2,6 +2,7 @@ package com.paulmathew.pulsesync.ui.conflict
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.paulmathew.pulsesync.sync.conflict.ConflictResolutionStrategy
 import com.paulmathew.pulsesync.sync.runtime.SyncOrchestrator
 import com.paulmathew.pulsesync.ui.mapping.toConflictUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,5 +46,34 @@ class ConflictViewModel @Inject constructor(
 
     fun onSelectionCleared() {
         selectedConflictId.value = null
+    }
+
+    fun onResolveSelectedConflict() {
+        val conflictId = selectedConflictId.value ?: return
+
+        orchestrator.resolveConflict(
+            operationId = conflictId,
+            strategy = selectedStrategy.value.toDomainStrategy(conflictId),
+            resolvedAtMillis = System.currentTimeMillis()
+        )
+
+        selectedConflictId.value = null
+    }
+
+
+}
+
+private fun ConflictResolutionStrategyUi.toDomainStrategy(
+    conflictId: String
+): ConflictResolutionStrategy {
+    return when (this) {
+        ConflictResolutionStrategyUi.LocalWins -> ConflictResolutionStrategy.LocalWins
+        ConflictResolutionStrategyUi.RemoteWins -> ConflictResolutionStrategy.RemoteWins
+        ConflictResolutionStrategyUi.Merge -> ConflictResolutionStrategy.Merge(
+            mergedSummary = "Merged local and remote versions",
+            mergedPayloadHash = "merged-$conflictId"
+        )
+
+        ConflictResolutionStrategyUi.ManualReview -> ConflictResolutionStrategy.ManualReview
     }
 }
