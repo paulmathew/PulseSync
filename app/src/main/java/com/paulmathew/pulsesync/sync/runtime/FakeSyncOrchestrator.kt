@@ -196,4 +196,13 @@ class FakeSyncOrchestrator(
             )
         )
     }
+    override fun completeActiveUsingNetworkProfile(nowMillis: Long) {
+        val profile = state.value.networkSimulation.selectedProfile
+        val result = NetworkSyncOutcomePolicy.resultFor(profile)
+
+        completeActive(
+            result = result,
+            nowMillis = nowMillis
+        )
+    }
 }
