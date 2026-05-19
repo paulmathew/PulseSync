@@ -261,7 +261,7 @@ Planned future phases may include:
 - operation detail history
 - more realistic packet loss and latency simulation
 
-  ## Roadmap
+## Roadmap
 
 PulseSync v1 focuses on deterministic sync behavior, runtime observability, and internal tooling screens using an in-memory fake runtime.
 
