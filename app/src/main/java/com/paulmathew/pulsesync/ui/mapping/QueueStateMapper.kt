@@ -11,8 +11,12 @@ import com.paulmathew.pulsesync.ui.queue.QueueFilter
 import com.paulmathew.pulsesync.ui.queue.QueueUiState
 
 fun SyncRuntimeState.toQueueUiState(
-    selectedFilter: QueueFilter = QueueFilter.All
+    selectedFilter: QueueFilter = QueueFilter.All,
+    selectedOperationId: String? = null
 ): QueueUiState {
+    val queuedOperations = operations
+        .mapNotNull { it.toQueuedOperationOrNull() }
+        .filter { it.matches(selectedFilter) }
     return QueueUiState(
         selectedFilter = selectedFilter,
         filters = listOf(
@@ -21,9 +25,10 @@ fun SyncRuntimeState.toQueueUiState(
             QueueFilter.Syncing,
             QueueFilter.Failed
         ),
-        operations = operations
-            .mapNotNull { it.toQueuedOperationOrNull() }
-            .filter { it.matches(selectedFilter) }
+        selectedOperation = queuedOperations.firstOrNull {
+            it.operationId == selectedOperationId
+        },
+        operations = queuedOperations
     )
 }
 
