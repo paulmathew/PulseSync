@@ -196,39 +196,8 @@ private fun RecentEventsPanel(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun DashboardScreenPreview() {
-    PulseSyncTheme {
-        DashboardScreen(
-            state = DashboardPreviewData.healthyState,
-            onStartNextSync = {},
-            onCompleteActiveAsSuccess = {},
-            onCompleteActiveAsTimeout = {},
-            onApplyNetworkResult = {}
 
-        )
-    }
-}
 
-@Preview(
-    name = "Dashboard - Healthy",
-    showBackground = true,
-    backgroundColor = 0xFF0D1117
-)
-@Composable
-private fun DashboardHealthyPreview() {
-    PulseSyncTheme {
-        DashboardScreen(
-            state = DashboardPreviewData.healthyState,
-            onStartNextSync = {},
-            onCompleteActiveAsSuccess = {},
-            onCompleteActiveAsTimeout = {},
-            onApplyNetworkResult = {}
-
-        )
-    }
-}
 
 @Composable
 private fun DashboardRuntimeControls(
@@ -238,11 +207,14 @@ private fun DashboardRuntimeControls(
 ) {
     OperationalPanel {
         Text(
-            text = "Runtime Controls",
+            text = "Sync Runtime Controls",
             color = TextPrimary,
             fontWeight = FontWeight.SemiBold
         )
-
+        Text(
+            text = "Drive the fake orchestrator and observe state propagation",
+            color = TextSecondary
+        )
         Spacer(modifier = Modifier.height(12.dp))
 
         Row(
@@ -285,15 +257,38 @@ private fun DashboardRuntimeControls(
     }
 }
 @Preview(
+    name = "Dashboard - Healthy",
+    showBackground = true,
+    backgroundColor = 0xFF0D1117
+)
+@Composable
+fun DashboardScreenPreview() {
+    PulseSyncTheme {
+        DashboardScreen(
+            state = DashboardPreviewData.healthyState,
+            onStartNextSync = {},
+            onCompleteActiveAsSuccess = {},
+            onCompleteActiveAsTimeout = {},
+            onApplyNetworkResult = {}
+        )
+    }
+}
+
+@Composable
+fun DashboardHealthyPreview() {
+    DashboardScreenPreview()
+}
+
+@Preview(
     name = "Dashboard - Degraded",
     showBackground = true,
     backgroundColor = 0xFF0D1117
 )
 @Composable
-private fun DashboardDegradedPreview() {
+fun DashboardDegradedPreview() {
     PulseSyncTheme {
         DashboardScreen(
-            state = DashboardPreviewData.healthyState,
+            state = DashboardPreviewData.degradedState,
             onStartNextSync = {},
             onCompleteActiveAsSuccess = {},
             onCompleteActiveAsTimeout = {},
@@ -308,7 +303,7 @@ private fun DashboardDegradedPreview() {
     backgroundColor = 0xFF0D1117
 )
 @Composable
-private fun DashboardFailureHeavyPreview() {
+fun DashboardFailureHeavyPreview() {
     PulseSyncTheme {
         DashboardScreen(
             state = DashboardPreviewData.failureHeavyState,
