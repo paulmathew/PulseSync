@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.paulmathew.pulsesync.model.OperationStatus
 import com.paulmathew.pulsesync.model.SyncHealthStatus
 import com.paulmathew.pulsesync.ui.components.MetricTile
@@ -54,7 +53,7 @@ fun DashboardRoute(
         onStartNextSync = viewModel::onStartNextSync,
         onCompleteActiveAsSuccess = viewModel::onCompleteActiveAsSuccess,
         onCompleteActiveAsTimeout = viewModel::onCompleteActiveAsTimeout,
-        onCompleteActiveUsingNetworkProfile = viewModel::onCompleteActiveUsingNetworkProfile,
+        onApplyNetworkResult = viewModel::onCompleteActiveUsingNetworkProfile,
     )
 }
 
@@ -64,7 +63,7 @@ fun DashboardScreen(
     onStartNextSync: () -> Unit,
     onCompleteActiveAsSuccess: () -> Unit,
     onCompleteActiveAsTimeout: () -> Unit,
-    onCompleteActiveUsingNetworkProfile: () -> Unit,
+    onApplyNetworkResult: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -92,7 +91,7 @@ fun DashboardScreen(
 
         DashboardRuntimeControls(
             onStartNextSync = onStartNextSync,
-            onCompleteActiveAsSuccess = onCompleteActiveUsingNetworkProfile,
+            onApplyNetworkResult = onApplyNetworkResult,
             onCompleteActiveAsTimeout = onCompleteActiveAsTimeout
         )
 
@@ -197,53 +196,25 @@ private fun RecentEventsPanel(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun DashboardScreenPreview() {
-    PulseSyncTheme {
-        DashboardScreen(
-            state = DashboardPreviewData.healthyState,
-            onStartNextSync = {},
-            onCompleteActiveAsSuccess = {},
-            onCompleteActiveAsTimeout = {},
-            onCompleteActiveUsingNetworkProfile = {}
 
-        )
-    }
-}
 
-@Preview(
-    name = "Dashboard - Healthy",
-    showBackground = true,
-    backgroundColor = 0xFF0D1117
-)
-@Composable
-private fun DashboardHealthyPreview() {
-    PulseSyncTheme {
-        DashboardScreen(
-            state = DashboardPreviewData.healthyState,
-            onStartNextSync = {},
-            onCompleteActiveAsSuccess = {},
-            onCompleteActiveAsTimeout = {},
-            onCompleteActiveUsingNetworkProfile = {}
-
-        )
-    }
-}
 
 @Composable
 private fun DashboardRuntimeControls(
     onStartNextSync: () -> Unit,
-    onCompleteActiveAsSuccess: () -> Unit,
+    onApplyNetworkResult: () -> Unit,
     onCompleteActiveAsTimeout: () -> Unit
 ) {
     OperationalPanel {
         Text(
-            text = "Runtime Controls",
+            text = "Sync Runtime Controls",
             color = TextPrimary,
             fontWeight = FontWeight.SemiBold
         )
-
+        Text(
+            text = "Drive the fake orchestrator and observe state propagation",
+            color = TextSecondary
+        )
         Spacer(modifier = Modifier.height(12.dp))
 
         Row(
@@ -263,7 +234,7 @@ private fun DashboardRuntimeControls(
 
             Button(
                 modifier = Modifier.weight(1f),
-                onClick = onCompleteActiveAsSuccess,
+                onClick = onApplyNetworkResult,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = WarningAmber,
                     contentColor = GraphiteBackground
@@ -286,19 +257,42 @@ private fun DashboardRuntimeControls(
     }
 }
 @Preview(
-    name = "Dashboard - Degraded",
+    name = "Dashboard - Healthy",
     showBackground = true,
     backgroundColor = 0xFF0D1117
 )
 @Composable
-private fun DashboardDegradedPreview() {
+fun DashboardScreenPreview() {
     PulseSyncTheme {
         DashboardScreen(
             state = DashboardPreviewData.healthyState,
             onStartNextSync = {},
             onCompleteActiveAsSuccess = {},
             onCompleteActiveAsTimeout = {},
-            onCompleteActiveUsingNetworkProfile = {}
+            onApplyNetworkResult = {}
+        )
+    }
+}
+
+@Composable
+fun DashboardHealthyPreview() {
+    DashboardScreenPreview()
+}
+
+@Preview(
+    name = "Dashboard - Degraded",
+    showBackground = true,
+    backgroundColor = 0xFF0D1117
+)
+@Composable
+fun DashboardDegradedPreview() {
+    PulseSyncTheme {
+        DashboardScreen(
+            state = DashboardPreviewData.degradedState,
+            onStartNextSync = {},
+            onCompleteActiveAsSuccess = {},
+            onCompleteActiveAsTimeout = {},
+            onApplyNetworkResult = {}
         )
     }
 }
@@ -309,14 +303,14 @@ private fun DashboardDegradedPreview() {
     backgroundColor = 0xFF0D1117
 )
 @Composable
-private fun DashboardFailureHeavyPreview() {
+fun DashboardFailureHeavyPreview() {
     PulseSyncTheme {
         DashboardScreen(
             state = DashboardPreviewData.failureHeavyState,
             onStartNextSync = {},
             onCompleteActiveAsSuccess = {},
             onCompleteActiveAsTimeout = {},
-            onCompleteActiveUsingNetworkProfile = {}
+            onApplyNetworkResult = {}
 
 
         )
