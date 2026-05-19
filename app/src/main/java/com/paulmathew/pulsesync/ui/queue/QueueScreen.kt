@@ -40,6 +40,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.paulmathew.pulsesync.model.QueuedOperationStatus
@@ -50,7 +51,7 @@ import com.paulmathew.pulsesync.ui.theme.PanelSurfaceElevated
 
 @Composable
 fun QueueRoute(
-    viewModel: QueueViewModel = viewModel()
+    viewModel: QueueViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
