@@ -54,6 +54,7 @@ fun DashboardRoute(
         onCompleteActiveAsSuccess = viewModel::onCompleteActiveAsSuccess,
         onCompleteActiveAsTimeout = viewModel::onCompleteActiveAsTimeout,
         onApplyNetworkResult = viewModel::onCompleteActiveUsingNetworkProfile,
+        onCompleteActiveAsConflict = viewModel::onCompleteActiveAsConflict,
     )
 }
 
@@ -64,6 +65,7 @@ fun DashboardScreen(
     onCompleteActiveAsSuccess: () -> Unit,
     onCompleteActiveAsTimeout: () -> Unit,
     onApplyNetworkResult: () -> Unit,
+    onCompleteActiveAsConflict: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -92,7 +94,8 @@ fun DashboardScreen(
         DashboardRuntimeControls(
             onStartNextSync = onStartNextSync,
             onApplyNetworkResult = onApplyNetworkResult,
-            onCompleteActiveAsTimeout = onCompleteActiveAsTimeout
+            onCompleteActiveAsTimeout = onCompleteActiveAsTimeout,
+            onCompleteActiveAsConflict = onCompleteActiveAsConflict,
         )
 
         RecentEventsPanel(state = state)
@@ -210,7 +213,8 @@ private fun RecentEventsPanel(
 private fun DashboardRuntimeControls(
     onStartNextSync: () -> Unit,
     onApplyNetworkResult: () -> Unit,
-    onCompleteActiveAsTimeout: () -> Unit
+    onCompleteActiveAsTimeout: () -> Unit,
+    onCompleteActiveAsConflict: () -> Unit,
 ) {
     OperationalPanel {
         Text(
@@ -224,41 +228,61 @@ private fun DashboardRuntimeControls(
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Button(
-                modifier = Modifier.weight(1f),
-                onClick = onStartNextSync,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = OperationalGreen,
-                    contentColor = GraphiteBackground
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(text = "Start")
+                Button(
+                    modifier = Modifier.weight(1f),
+                    onClick = onStartNextSync,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = OperationalGreen,
+                        contentColor = GraphiteBackground
+                    )
+                ) {
+                    Text(text = "Start")
+                }
+
+                Button(
+                    modifier = Modifier.weight(1f),
+                    onClick = onApplyNetworkResult,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = WarningAmber,
+                        contentColor = GraphiteBackground
+                    )
+                ) {
+                    Text(text = "Network")
+                }
             }
 
-            Button(
-                modifier = Modifier.weight(1f),
-                onClick = onApplyNetworkResult,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = WarningAmber,
-                    contentColor = GraphiteBackground
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(text = "Network")
-            }
+                Button(
+                    modifier = Modifier.weight(1f),
+                    onClick = onCompleteActiveAsTimeout,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = FailureRed,
+                        contentColor = TextPrimary
+                    )
+                ) {
+                    Text(text = "Timeout")
+                }
 
-            Button(
-                modifier = Modifier.weight(1f),
-                onClick = onCompleteActiveAsTimeout,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = FailureRed,
-                    contentColor = TextPrimary
-                )
-            ) {
-                Text(text = "Timeout")
+                Button(
+                    modifier = Modifier.weight(1f),
+                    onClick = onCompleteActiveAsConflict,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = WarningAmber,
+                        contentColor = GraphiteBackground
+                    )
+                ) {
+                    Text(text = "Conflict")
+                }
             }
         }
     }
@@ -276,7 +300,8 @@ fun DashboardScreenPreview() {
             onStartNextSync = {},
             onCompleteActiveAsSuccess = {},
             onCompleteActiveAsTimeout = {},
-            onApplyNetworkResult = {}
+            onApplyNetworkResult = {},
+            onCompleteActiveAsConflict = {}
         )
     }
 }
@@ -299,7 +324,8 @@ fun DashboardDegradedPreview() {
             onStartNextSync = {},
             onCompleteActiveAsSuccess = {},
             onCompleteActiveAsTimeout = {},
-            onApplyNetworkResult = {}
+            onApplyNetworkResult = {},
+            onCompleteActiveAsConflict = {}
         )
     }
 }
@@ -317,7 +343,8 @@ fun DashboardFailureHeavyPreview() {
             onStartNextSync = {},
             onCompleteActiveAsSuccess = {},
             onCompleteActiveAsTimeout = {},
-            onApplyNetworkResult = {}
+            onApplyNetworkResult = {},
+            onCompleteActiveAsConflict = {}
 
 
         )

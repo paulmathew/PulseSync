@@ -3,7 +3,6 @@ package com.paulmathew.pulsesync.ui.observability
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paulmathew.pulsesync.sync.runtime.SyncOrchestrator
-import com.paulmathew.pulsesync.sync.runtime.SyncRuntimeProvider
 import com.paulmathew.pulsesync.ui.mapping.toObservabilityUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted

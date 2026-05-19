@@ -13,7 +13,6 @@ import com.paulmathew.pulsesync.sync.runtime.SyncRuntimeState
 import com.paulmathew.pulsesync.ui.queue.QueueFilter
 import com.paulmathew.pulsesync.ui.timeline.TimelineFilter
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class RuntimeStateMapperTest {
