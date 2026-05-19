@@ -261,6 +261,21 @@ Planned future phases may include:
 - operation detail history
 - more realistic packet loss and latency simulation
 
+  ## Roadmap
+
+PulseSync v1 focuses on deterministic sync behavior, runtime observability, and internal tooling screens using an in-memory fake runtime.
+
+Future architecture phases:
+
+- Extract the pure sync engine into a standalone `:core:sync` module
+- Split runtime orchestration into dedicated runtime/data modules
+- Add Room-backed durable operation, event, and conflict storage
+- Add WorkManager-backed background sync execution
+- Add CI verification with unit tests and debug builds
+- Add static analysis with ktlint or detekt
+- Expand observability with richer charts and latency metrics
+- Add more realistic packet loss and latency simulation
+
 ## Portfolio Intent
 
 PulseSync is built to communicate Android architecture and reliability engineering judgment.
