@@ -5,13 +5,16 @@ import androidx.lifecycle.viewModelScope
 import com.paulmathew.pulsesync.sync.runtime.SyncOrchestrator
 import com.paulmathew.pulsesync.sync.runtime.SyncRuntimeProvider
 import com.paulmathew.pulsesync.ui.mapping.toObservabilityUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
-class ObservabilityViewModel(
-    orchestrator: SyncOrchestrator = SyncRuntimeProvider.orchestrator
+@HiltViewModel
+class ObservabilityViewModel @Inject constructor(
+    private val orchestrator: SyncOrchestrator
 ) : ViewModel() {
 
     val uiState: StateFlow<ObservabilityUiState> = orchestrator.state

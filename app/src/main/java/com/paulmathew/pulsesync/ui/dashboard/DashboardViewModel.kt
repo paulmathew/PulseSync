@@ -10,10 +10,13 @@ import kotlinx.coroutines.flow.stateIn
 import androidx.lifecycle.viewModelScope
 import com.paulmathew.pulsesync.sync.SyncAttemptResult
 import com.paulmathew.pulsesync.sync.SyncFailureReason
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import javax.inject.Inject
 
-class DashboardViewModel(
-    private val orchestrator: SyncOrchestrator = SyncRuntimeProvider.orchestrator
+@HiltViewModel
+class DashboardViewModel @Inject constructor(
+    private val orchestrator: SyncOrchestrator
 ) : ViewModel() {
 
     val uiState: StateFlow<DashboardUiState> = orchestrator.state

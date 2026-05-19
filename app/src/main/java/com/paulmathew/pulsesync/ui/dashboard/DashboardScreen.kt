@@ -38,13 +38,14 @@ import com.paulmathew.pulsesync.ui.theme.TextPrimary
 import com.paulmathew.pulsesync.ui.theme.TextSecondary
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.paulmathew.pulsesync.ui.theme.OperationalGreen
 import com.paulmathew.pulsesync.ui.theme.FailureRed
 import com.paulmathew.pulsesync.ui.theme.WarningAmber
 
 @Composable
 fun DashboardRoute(
-    viewModel: DashboardViewModel = viewModel()
+    viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 

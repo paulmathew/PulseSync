@@ -74,6 +74,6 @@ dependencies {
     // Hilt Dependency Injection
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
-    annotationProcessor(libs.hilt.compiler) // Note: If using KSP, change this to ksp()
+    ksp(libs.hilt.compiler)
 
 }
