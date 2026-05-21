@@ -21,6 +21,12 @@ sealed class PulseRoute(
     data object Create : PulseRoute("create")
     data object Shared : PulseRoute("shared")
     data object Profile : PulseRoute("profile")
+    //data object Editor : PulseRoute("editor")
+    data object Editor : PulseRoute("editor/{documentId}") {
+        fun createRoute(documentId: String): String {
+            return "editor/$documentId"
+        }
+    }
 
 
 
