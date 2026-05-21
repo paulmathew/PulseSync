@@ -2,8 +2,10 @@ package com.paulmathew.pulsesync.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.FormatListBulleted
 import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.Dashboard
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Queue
 import androidx.compose.material.icons.outlined.ReportProblem
@@ -26,6 +28,10 @@ import com.paulmathew.pulsesync.ui.theme.PanelBorder
 import com.paulmathew.pulsesync.ui.theme.PanelSurface
 import com.paulmathew.pulsesync.ui.theme.TextPrimary
 import com.paulmathew.pulsesync.ui.theme.TextSecondary
+import androidx.compose.material.icons.outlined.FormatListBulleted
+import androidx.compose.material.icons.outlined.AddCircle
+import androidx.compose.material.icons.outlined.Group
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 
 @Composable
@@ -41,7 +47,7 @@ fun PulseNavigationShell() {
                 selectedRoute = currentDestination?.route,
                 onDestinationSelected = { destination ->
                     navController.navigate(destination.route.route) {
-                        popUpTo(PulseRoute.Dashboard.route) {
+                        popUpTo(PulseRoute.Home.route) {
                             saveState = true
                         }
                         launchSingleTop = true
@@ -101,36 +107,31 @@ private enum class PulseTopLevelDestination(
     val label: String,
     val icon: ImageVector
 ) {
-    Dashboard(
-        route = PulseRoute.Dashboard,
-        label = "Dashboard",
-        icon = Icons.Outlined.Dashboard
+    Home(
+        route = PulseRoute.Home,
+        label = "Home",
+        icon = Icons.Outlined.Home
     ),
-    Timeline(
-        route = PulseRoute.Timeline,
-        label = "Timeline",
-        icon = Icons.Outlined.ListAlt
+    Activity(
+        route = PulseRoute.Activity,
+        label = "Activity",
+        icon = Icons.Outlined.FormatListBulleted
     ),
-    Queue(
-        route = PulseRoute.Queue,
-        label = "Queue",
-        icon = Icons.Outlined.Queue
+    Create(
+        route = PulseRoute.Create,
+        label = "Create",
+        icon = Icons.Outlined.AddCircle
     ),
-    Simulation(
-        route = PulseRoute.NetworkSimulation,
-        label = "Network",
-        icon = Icons.Outlined.SettingsEthernet
+    Shared(
+        route = PulseRoute.Shared,
+        label = "Shared",
+        icon = Icons.Outlined.Group
     ),
-    Observability(
-        route = PulseRoute.Observability,
-        label = "Observe",
-        icon = Icons.Outlined.Analytics
-    ),
-    Conflicts(
-        route = PulseRoute.Conflicts,
-        label = "Conflicts",
-        icon = Icons.Outlined.ReportProblem
-    ),
+    Profile(
+        route = PulseRoute.Profile,
+        label = "Profile",
+        icon = Icons.Outlined.Person
+    )
 
 }
 

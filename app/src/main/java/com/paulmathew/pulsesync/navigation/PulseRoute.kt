@@ -16,5 +16,12 @@ sealed class PulseRoute(
 
     data object Conflicts : PulseRoute("conflicts")
 
+    data object Home : PulseRoute("home")
+    data object Activity : PulseRoute("activity")
+    data object Create : PulseRoute("create")
+    data object Shared : PulseRoute("shared")
+    data object Profile : PulseRoute("profile")
+
+
 
 }
