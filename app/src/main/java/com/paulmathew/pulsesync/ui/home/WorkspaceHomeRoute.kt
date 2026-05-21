@@ -20,11 +20,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -42,18 +46,39 @@ import com.paulmathew.pulsesync.ui.theme.PulseThemeTokens
 import com.paulmathew.pulsesync.model.sync.SyncStatus
 import com.paulmathew.pulsesync.ui.sync.PendingChangesSummary
 import com.paulmathew.pulsesync.ui.sync.SyncStateIndicator
-
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.paulmathew.pulsesync.ui.queue.v2.SyncQueueDrawer
+import com.paulmathew.pulsesync.ui.queue.v2.SyncQueuePreviewData
 @Composable
 fun WorkspaceHomeRoute(
     onWorkspaceClick: (WorkspaceItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showQueueDrawer by remember { mutableStateOf(false) }
+
     WorkspaceHomeScreen(
         state = WorkspaceHomePreviewData.defaultState,
         onFilterSelected = {},
         onWorkspaceSelected = onWorkspaceClick,
-        onCreateWorkspace = {}
+        onCreateWorkspace = {},
+        onQueueClick = {
+            showQueueDrawer = true
+        },
+        modifier = modifier
     )
+
+    if (showQueueDrawer) {
+        SyncQueueDrawer(
+            state = SyncQueuePreviewData.default,
+            onDismissRequest = {
+                showQueueDrawer = false
+            }
+        )
+    }
+
 }
 
 @Composable
@@ -62,6 +87,7 @@ fun WorkspaceHomeScreen(
     onFilterSelected: (WorkspaceFilter) -> Unit,
     onWorkspaceSelected: (WorkspaceItem) -> Unit,
     onCreateWorkspace: () -> Unit,
+    onQueueClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -74,7 +100,7 @@ fun WorkspaceHomeScreen(
                 top = PulseThemeTokens.spacing.md
             )
     ) {
-        WorkspaceTopBar()
+        WorkspaceTopBar(onQueueClick = onQueueClick)
 
         Spacer(modifier = Modifier.height(PulseThemeTokens.spacing.xl))
 
@@ -98,8 +124,8 @@ fun WorkspaceHomeScreen(
                 .fillMaxSize()
                 .background(PulseColors.BackgroundPrimary),
             contentPadding = PaddingValues(
-                start = PulseThemeTokens.spacing.md,
-                end = PulseThemeTokens.spacing.md,
+                start = PulseThemeTokens.spacing.xxs,
+                end = PulseThemeTokens.spacing.xxs,
                 top = PulseThemeTokens.spacing.xl,
                 bottom = PulseThemeTokens.spacing.xxl
             ),
@@ -124,7 +150,7 @@ fun WorkspaceHomeScreen(
 }
 
 @Composable
-private fun WorkspaceTopBar() {
+private fun WorkspaceTopBar(onQueueClick: () -> Unit,) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -150,6 +176,13 @@ private fun WorkspaceTopBar() {
                 Icon(
                     imageVector = Icons.Outlined.Notifications,
                     contentDescription = "Notifications",
+                    tint = PulseColors.TextSecondary
+                )
+            }
+            IconButton(onClick = onQueueClick) {
+                Icon(
+                    imageVector = Icons.Outlined.AccessTime,
+                    contentDescription = "Sync queue",
                     tint = PulseColors.TextSecondary
                 )
             }
@@ -339,7 +372,8 @@ private fun WorkspaceHomeScreenPreview() {
             state = WorkspaceHomePreviewData.defaultState,
             onFilterSelected = {},
             onWorkspaceSelected = {},
-            onCreateWorkspace = {}
+            onCreateWorkspace = {},
+            onQueueClick = {}
         )
     }
 }
