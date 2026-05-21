@@ -52,6 +52,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.onFocusChanged
+import com.paulmathew.pulsesync.model.sync.SyncStatus
+import com.paulmathew.pulsesync.ui.sync.SyncConfidenceBadge
 
 @Composable
 fun EditorRoute(
@@ -212,59 +214,10 @@ private fun EditorTopBar(
             },
             label = "EditorSyncState"
         ) { targetState ->
-            EditorSyncPill(
-                syncState = targetState,
-                updatedAtLabel = updatedAtLabel
+            SyncConfidenceBadge(
+                status = targetState.toSyncStatus()
             )
         }
-    }
-}
-
-@Composable
-private fun EditorSyncPill(
-    syncState: EditorSyncState,
-    updatedAtLabel: String,
-    modifier: Modifier = Modifier
-) {
-    val label = when (syncState) {
-        EditorSyncState.Synced -> updatedAtLabel
-        EditorSyncState.Syncing -> "Saving..."
-        EditorSyncState.OfflinePending -> "Saved offline"
-        EditorSyncState.Retrying -> "Retrying..."
-    }
-
-    val color = when (syncState) {
-        EditorSyncState.Synced -> PulseColors.TrustGreen
-        EditorSyncState.Syncing -> PulseColors.AccentPrimary
-        EditorSyncState.OfflinePending -> PulseColors.WarningAmber
-        EditorSyncState.Retrying -> PulseColors.WarningAmber
-    }
-
-    Row(
-        modifier = modifier
-            .background(
-                color = color.copy(alpha = 0.12f),
-                shape = PulseThemeTokens.radii.full
-            )
-            .padding(horizontal = 10.dp, vertical = 6.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(7.dp)
-                .background(
-                    color = color,
-                    shape = PulseThemeTokens.radii.full
-                )
-        )
-
-        Text(
-            text = label,
-            color = color,
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Medium
-        )
     }
 }
 @Composable
@@ -365,5 +318,13 @@ private fun EditorRetryingPreview() {
             onIntent = {},
             onBackClick = {}
         )
+    }
+}
+private fun EditorSyncState.toSyncStatus(): SyncStatus {
+    return when (this) {
+        EditorSyncState.Synced -> SyncStatus.Synced
+        EditorSyncState.Syncing -> SyncStatus.Syncing
+        EditorSyncState.OfflinePending -> SyncStatus.OfflinePending(pendingChanges = 1)
+        EditorSyncState.Retrying -> SyncStatus.Retrying(attemptLabel = "Retrying changes")
     }
 }
