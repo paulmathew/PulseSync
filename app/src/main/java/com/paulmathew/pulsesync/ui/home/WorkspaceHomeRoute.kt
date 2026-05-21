@@ -41,11 +41,14 @@ import com.paulmathew.pulsesync.ui.theme.PulseTheme
 import com.paulmathew.pulsesync.ui.theme.PulseThemeTokens
 
 @Composable
-fun WorkspaceHomeRoute() {
+fun WorkspaceHomeRoute(
+    onWorkspaceClick: (WorkspaceItem) -> Unit,
+    modifier: Modifier = Modifier
+) {
     WorkspaceHomeScreen(
         state = WorkspaceHomePreviewData.defaultState,
         onFilterSelected = {},
-        onWorkspaceSelected = {},
+        onWorkspaceSelected = onWorkspaceClick,
         onCreateWorkspace = {}
     )
 }
@@ -88,7 +91,7 @@ fun WorkspaceHomeScreen(
 
         Spacer(modifier = Modifier.height(PulseThemeTokens.spacing.md))
         LazyColumn(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .background(PulseColors.BackgroundPrimary),
             contentPadding = PaddingValues(

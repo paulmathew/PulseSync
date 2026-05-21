@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.paulmathew.pulsesync.ui.conflict.ConflictResolutionRoute
 import com.paulmathew.pulsesync.ui.dashboard.DashboardRoute
+import com.paulmathew.pulsesync.ui.editor.EditorRoute
 import com.paulmathew.pulsesync.ui.observability.ObservabilityRoute
 import com.paulmathew.pulsesync.ui.queue.QueueRoute
 import com.paulmathew.pulsesync.ui.simulation.NetworkSimulationRoute
@@ -37,7 +38,13 @@ fun PulseNavGraph(
         modifier = modifier
     ) {
         composable(PulseRoute.Home.route) {
-            WorkspaceHomeRoute()
+            WorkspaceHomeRoute(
+                onWorkspaceClick = { item ->
+                    navController.navigate(
+                        PulseRoute.Editor.createRoute(item.id)
+                    )
+                }
+            )
         }
 
         composable(PulseRoute.Activity.route) {
@@ -57,6 +64,19 @@ fun PulseNavGraph(
         composable(PulseRoute.Profile.route) {
             PlaceholderRoute(title = "Profile\n" +
                     "Sync settings and diagnostics will live here.")
+        }
+//        composable(PulseRoute.Editor.route) {
+//            EditorRoute(
+//                onBackClick = { navController.popBackStack() }
+//            )
+//        }
+        composable(PulseRoute.Editor.route) { backStackEntry ->
+            val documentId = backStackEntry.arguments?.getString("documentId")
+
+            EditorRoute(
+                documentId = documentId,
+                onBackClick = { navController.popBackStack() }
+            )
         }
     }
 }
