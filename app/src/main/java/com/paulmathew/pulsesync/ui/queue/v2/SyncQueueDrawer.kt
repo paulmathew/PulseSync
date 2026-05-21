@@ -56,9 +56,10 @@ private fun SyncQueueDrawerContent(
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
         contentPadding = PaddingValues(
-            start = PulseThemeTokens.spacing.xxs,
-            end = PulseThemeTokens.spacing.xxs,
-            bottom = PulseThemeTokens.spacing.xxl
+            start = PulseThemeTokens.spacing.sm,
+            end = PulseThemeTokens.spacing.sm,
+            bottom = PulseThemeTokens.spacing.xxl,
+            top = PulseThemeTokens.spacing.lg
         ),
         verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.md)
     ) {
