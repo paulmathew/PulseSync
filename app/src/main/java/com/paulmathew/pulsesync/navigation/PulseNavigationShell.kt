@@ -39,22 +39,28 @@ fun PulseNavigationShell() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
+    val selectedRoute = currentDestination?.route
+    val showBottomBar = PulseTopLevelDestination.entries.any { destination ->
+        selectedRoute == destination.route.route
+    }
 
     Scaffold(
         containerColor = GraphiteBackground,
         bottomBar = {
-            PulseBottomNavigationBar(
-                selectedRoute = currentDestination?.route,
-                onDestinationSelected = { destination ->
-                    navController.navigate(destination.route.route) {
-                        popUpTo(PulseRoute.Home.route) {
-                            saveState = true
+            if (showBottomBar) {
+                PulseBottomNavigationBar(
+                    selectedRoute = selectedRoute,
+                    onDestinationSelected = { destination ->
+                        navController.navigate(destination.route.route) {
+                            popUpTo(PulseRoute.Home.route) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
-                }
-            )
+                )
+            }
         }
     ) { innerPadding ->
         PulseNavGraph(
@@ -134,4 +140,3 @@ private enum class PulseTopLevelDestination(
     )
 
 }
-
