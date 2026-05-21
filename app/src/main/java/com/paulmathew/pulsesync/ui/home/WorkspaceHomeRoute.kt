@@ -39,6 +39,9 @@ import com.paulmathew.pulsesync.ui.components.PulseSurfaceTone
 import com.paulmathew.pulsesync.ui.theme.PulseColors
 import com.paulmathew.pulsesync.ui.theme.PulseTheme
 import com.paulmathew.pulsesync.ui.theme.PulseThemeTokens
+import com.paulmathew.pulsesync.model.sync.SyncStatus
+import com.paulmathew.pulsesync.ui.sync.PendingChangesSummary
+import com.paulmathew.pulsesync.ui.sync.SyncStateIndicator
 
 @Composable
 fun WorkspaceHomeRoute(
@@ -291,7 +294,9 @@ private fun WorkspaceCard(
                     collaborators = item.collaborators
                 )
 
-                SyncStateLabel(syncState = item.syncState)
+                SyncStateIndicator(
+                    status = item.syncState.toSyncStatus(item.pendingLocalChanges)
+                )
             }
 
             Text(
@@ -304,11 +309,8 @@ private fun WorkspaceCard(
             )
 
             if (item.pendingLocalChanges > 0) {
-                Text(
-                    text = "${item.pendingLocalChanges} local changes waiting",
-                    color = PulseColors.WarningAmber,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Medium
+                PendingChangesSummary(
+                    pendingChanges = item.pendingLocalChanges
                 )
             }
         }
@@ -324,31 +326,6 @@ private val WorkspaceFilter.label: String
         WorkspaceFilter.Files -> "Files"
     }
 
-@Composable
-private fun SyncStateLabel(
-    syncState: WorkspaceSyncState
-) {
-    val label = when (syncState) {
-        WorkspaceSyncState.Synced -> "Synced"
-        is WorkspaceSyncState.Syncing -> "Syncing"
-        is WorkspaceSyncState.Offline -> "Offline"
-        is WorkspaceSyncState.NeedsAttention -> "Needs review"
-    }
-
-    val color = when (syncState) {
-        WorkspaceSyncState.Synced -> PulseColors.TrustGreen
-        is WorkspaceSyncState.Syncing -> PulseColors.AccentPrimary
-        is WorkspaceSyncState.Offline -> PulseColors.WarningAmber
-        is WorkspaceSyncState.NeedsAttention -> PulseColors.FailureRed
-    }
-
-    Text(
-        text = label,
-        color = color,
-        style = MaterialTheme.typography.labelSmall,
-        fontWeight = FontWeight.Medium
-    )
-}
 
 @Preview(
     name = "Workspace Home",
@@ -364,5 +341,15 @@ private fun WorkspaceHomeScreenPreview() {
             onWorkspaceSelected = {},
             onCreateWorkspace = {}
         )
+    }
+}
+private fun WorkspaceSyncState.toSyncStatus(
+    pendingChanges: Int
+): SyncStatus {
+    return when (this) {
+        WorkspaceSyncState.Synced -> SyncStatus.Synced
+        is WorkspaceSyncState.Syncing -> SyncStatus.Syncing
+        is WorkspaceSyncState.Offline -> SyncStatus.OfflinePending(pendingChanges)
+        is WorkspaceSyncState.NeedsAttention -> SyncStatus.NeedsAttention
     }
 }
