@@ -3,6 +3,7 @@ package com.paulmathew.pulsesync.ui.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -22,8 +23,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -50,15 +54,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.paulmathew.pulsesync.ui.conflict.v2.ConflictResolutionPreviewData
+import com.paulmathew.pulsesync.ui.conflict.v2.ConflictResolutionSheet
 import com.paulmathew.pulsesync.ui.queue.v2.SyncQueueDrawer
 import com.paulmathew.pulsesync.ui.queue.v2.SyncQueuePreviewData
+
 @Composable
 fun WorkspaceHomeRoute(
     onWorkspaceClick: (WorkspaceItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showQueueDrawer by remember { mutableStateOf(false) }
-
+    var showConflictSheet by remember { mutableStateOf(false) }
+    var conflictState by remember {
+        mutableStateOf(ConflictResolutionPreviewData.default)
+    }
     WorkspaceHomeScreen(
         state = WorkspaceHomePreviewData.defaultState,
         onFilterSelected = {},
@@ -66,6 +76,9 @@ fun WorkspaceHomeRoute(
         onCreateWorkspace = {},
         onQueueClick = {
             showQueueDrawer = true
+        },
+        onConflictClick = {
+            showConflictSheet=true
         },
         modifier = modifier
     )
@@ -75,6 +88,20 @@ fun WorkspaceHomeRoute(
             state = SyncQueuePreviewData.default,
             onDismissRequest = {
                 showQueueDrawer = false
+            }
+        )
+    }
+    if (showConflictSheet) {
+        ConflictResolutionSheet(
+            state = conflictState,
+            onChoiceSelected = { choice ->
+                conflictState = conflictState.copy(selectedChoice = choice)
+            },
+            onResolveClick = {
+                showConflictSheet = false
+            },
+            onDismissRequest = {
+                showConflictSheet = false
             }
         )
     }
@@ -88,6 +115,7 @@ fun WorkspaceHomeScreen(
     onWorkspaceSelected: (WorkspaceItem) -> Unit,
     onCreateWorkspace: () -> Unit,
     onQueueClick: () -> Unit,
+    onConflictClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -100,7 +128,7 @@ fun WorkspaceHomeScreen(
                 top = PulseThemeTokens.spacing.md
             )
     ) {
-        WorkspaceTopBar(onQueueClick = onQueueClick)
+        WorkspaceTopBar(onQueueClick = onQueueClick, onConflictClick = onConflictClick)
 
         Spacer(modifier = Modifier.height(PulseThemeTokens.spacing.xl))
 
@@ -150,7 +178,12 @@ fun WorkspaceHomeScreen(
 }
 
 @Composable
-private fun WorkspaceTopBar(onQueueClick: () -> Unit,) {
+private fun WorkspaceTopBar(
+    onQueueClick: () -> Unit,
+    onConflictClick: () -> Unit,
+) {
+    var showMenu by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -179,12 +212,36 @@ private fun WorkspaceTopBar(onQueueClick: () -> Unit,) {
                     tint = PulseColors.TextSecondary
                 )
             }
-            IconButton(onClick = onQueueClick) {
-                Icon(
-                    imageVector = Icons.Outlined.AccessTime,
-                    contentDescription = "Sync queue",
-                    tint = PulseColors.TextSecondary
-                )
+
+            Box {
+                IconButton(onClick = { showMenu = true }) {
+                    Icon(
+                        imageVector = Icons.Outlined.MoreVert,
+                        contentDescription = "More options",
+                        tint = PulseColors.TextSecondary
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Sync Queue") },
+                        onClick = {
+                            showMenu = false
+                            onQueueClick()
+                        }
+                    )
+
+                    DropdownMenuItem(
+                        text = { Text("Resolve Conflict") },
+                        onClick = {
+                            showMenu = false
+                            onConflictClick()
+                        }
+                    )
+                }
             }
         }
     }
@@ -373,10 +430,12 @@ private fun WorkspaceHomeScreenPreview() {
             onFilterSelected = {},
             onWorkspaceSelected = {},
             onCreateWorkspace = {},
-            onQueueClick = {}
+            onQueueClick = {},
+            onConflictClick = {},
         )
     }
 }
+
 private fun WorkspaceSyncState.toSyncStatus(
     pendingChanges: Int
 ): SyncStatus {
