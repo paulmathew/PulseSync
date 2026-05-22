@@ -1,13 +1,20 @@
 package com.paulmathew.pulsesync.ui.focus
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
@@ -26,9 +33,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.paulmathew.pulsesync.model.focus.FocusActivity
 import com.paulmathew.pulsesync.model.focus.FocusItem
 import com.paulmathew.pulsesync.model.focus.FocusItemType
@@ -179,6 +188,10 @@ private fun FocusSessionHeader(
                 )
             }
         )
+        FocusPresenceRow(
+            activeName = "Sarah",
+            action = "is editing launch copy"
+        )
     }
 }
 
@@ -290,25 +303,114 @@ private fun FocusActivityStrip(
     activity: List<FocusActivity>
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.sm)
+        verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.md)
     ) {
-        Text(
-            text = "Live activity",
-            color = PulseColors.TextPrimary,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold
-        )
-
-        activity.take(3).forEach { event ->
+        Column(verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.xs)) {
             Text(
-                text = "${event.message} · ${event.timestampLabel}",
-                color = PulseColors.TextSecondary,
+                text = "Live activity",
+                color = PulseColors.TextPrimary,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            Text(
+                text = "Recent collaboration updates",
+                color = PulseColors.TextTertiary,
                 style = MaterialTheme.typography.bodySmall
             )
+        }
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.sm)
+        ) {
+            activity.take(4).forEach { event ->
+                FocusActivityRow(event = event)
+            }
         }
     }
 }
 
+@Composable
+private fun FocusPresenceRow(
+    activeName: String,
+    action: String
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.xs),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        PresencePulseDot()
+
+        Text(
+            text = "$activeName $action",
+            color = PulseColors.TextSecondary,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+@Composable
+private fun PresencePulseDot() {
+    val transition = rememberInfiniteTransition(label = "PresencePulse")
+
+    val alpha by transition.animateFloat(
+        initialValue = 0.35f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1200),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "PresencePulseAlpha"
+    )
+
+    Box(
+        modifier = Modifier
+            .size(8.dp)
+            .alpha(alpha)
+            .background(
+                color = PulseColors.TrustGreen,
+                shape = PulseThemeTokens.radii.full
+            )
+    )
+}
+
+@Composable
+private fun FocusActivityRow(
+    event: FocusActivity
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.sm),
+        verticalAlignment = Alignment.Top
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(top = 6.dp)
+                .size(7.dp)
+                .background(
+                    color = PulseColors.AccentPrimary.copy(alpha = 0.8f),
+                    shape = PulseThemeTokens.radii.full
+                )
+        )
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                text = event.message,
+                color = PulseColors.TextSecondary,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Medium
+            )
+
+            Text(
+                text = event.timestampLabel,
+                color = PulseColors.TextTertiary,
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
+    }
+}
 @Preview
 @Composable
 private fun FocusSessionScreenPreview() {
