@@ -62,6 +62,7 @@ import com.paulmathew.pulsesync.ui.queue.v2.SyncQueuePreviewData
 @Composable
 fun WorkspaceHomeRoute(
     onWorkspaceClick: (WorkspaceItem) -> Unit,
+    onOfflineChangesClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showQueueDrawer by remember { mutableStateOf(false) }
@@ -78,9 +79,10 @@ fun WorkspaceHomeRoute(
             showQueueDrawer = true
         },
         onConflictClick = {
-            showConflictSheet=true
+            showConflictSheet = true
         },
-        modifier = modifier
+        modifier = modifier,
+        onOfflineChangesClick = onOfflineChangesClick
     )
 
     if (showQueueDrawer) {
@@ -116,7 +118,8 @@ fun WorkspaceHomeScreen(
     onCreateWorkspace: () -> Unit,
     onQueueClick: () -> Unit,
     onConflictClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOfflineChangesClick: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -128,7 +131,11 @@ fun WorkspaceHomeScreen(
                 top = PulseThemeTokens.spacing.md
             )
     ) {
-        WorkspaceTopBar(onQueueClick = onQueueClick, onConflictClick = onConflictClick)
+        WorkspaceTopBar(
+            onQueueClick = onQueueClick,
+            onConflictClick = onConflictClick,
+            onOfflineChangesClick= onOfflineChangesClick
+        )
 
         Spacer(modifier = Modifier.height(PulseThemeTokens.spacing.xl))
 
@@ -181,6 +188,7 @@ fun WorkspaceHomeScreen(
 private fun WorkspaceTopBar(
     onQueueClick: () -> Unit,
     onConflictClick: () -> Unit,
+    onOfflineChangesClick: () -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
@@ -239,6 +247,13 @@ private fun WorkspaceTopBar(
                         onClick = {
                             showMenu = false
                             onConflictClick()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Offline Changes") },
+                        onClick = {
+                            showMenu = false
+                            onOfflineChangesClick()
                         }
                     )
                 }
@@ -432,6 +447,7 @@ private fun WorkspaceHomeScreenPreview() {
             onCreateWorkspace = {},
             onQueueClick = {},
             onConflictClick = {},
+            onOfflineChangesClick = {}
         )
     }
 }

@@ -26,6 +26,7 @@ import com.paulmathew.pulsesync.ui.queue.QueueRoute
 import com.paulmathew.pulsesync.ui.simulation.NetworkSimulationRoute
 import com.paulmathew.pulsesync.ui.timeline.TimelineRoute
 import com.paulmathew.pulsesync.ui.home.WorkspaceHomeRoute
+import com.paulmathew.pulsesync.ui.offline.OfflineExperienceRoute
 import com.paulmathew.pulsesync.ui.profile.ProfileRoute
 import com.paulmathew.pulsesync.ui.theme.PulseColors
 
@@ -47,6 +48,9 @@ fun PulseNavGraph(
                     navController.navigate(
                         PulseRoute.Editor.createRoute(item.id)
                     )
+                },
+                onOfflineChangesClick = {
+                    navController.navigate(PulseRoute.OfflineExperience.route)
                 }
             )
         }
@@ -159,6 +163,14 @@ fun PulseNavGraph(
             ) {
                 ConflictResolutionRoute()
             }
+        }
+        composable(PulseRoute.OfflineExperience.route) {
+            OfflineExperienceRoute(
+                onViewQueueClick = {
+                    navController.popBackStack()
+                    // If queue drawer is only on Home, this can stay fake for now.
+                }
+            )
         }
     }
 }
