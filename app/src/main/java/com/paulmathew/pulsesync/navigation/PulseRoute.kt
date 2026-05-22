@@ -33,6 +33,7 @@ sealed class PulseRoute(
     data object DiagnosticsRuntimeEvents : PulseRoute("diagnostics/runtime-events")
     data object DiagnosticsQueue : PulseRoute("diagnostics/queue")
     data object DiagnosticsConflicts : PulseRoute("diagnostics/conflicts")
+    data object OfflineExperience : PulseRoute("offline_experience")
 
 
 
