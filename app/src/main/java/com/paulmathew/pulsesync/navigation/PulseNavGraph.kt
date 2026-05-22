@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.paulmathew.pulsesync.ui.activity.ActivityRoute
 import com.paulmathew.pulsesync.ui.conflict.ConflictResolutionRoute
 import com.paulmathew.pulsesync.ui.dashboard.DashboardRoute
+import com.paulmathew.pulsesync.ui.diagnostics.DiagnosticsHomeRoute
 import com.paulmathew.pulsesync.ui.editor.EditorRoute
 import com.paulmathew.pulsesync.ui.observability.ObservabilityRoute
 import com.paulmathew.pulsesync.ui.queue.QueueRoute
@@ -81,6 +82,25 @@ fun PulseNavGraph(
             EditorRoute(
                 documentId = documentId,
                 onBackClick = { navController.popBackStack() }
+            )
+        }
+        composable(PulseRoute.DiagnosticsHome.route) {
+            DiagnosticsHomeRoute(
+                onNetworkClick = {
+                    navController.navigate(PulseRoute.DiagnosticsNetwork.route)
+                },
+                onRuntimeEventsClick = {
+                    navController.navigate(PulseRoute.DiagnosticsRuntimeEvents.route)
+                },
+                onObservabilityClick = {
+                    navController.navigate(PulseRoute.DiagnosticsObservability.route)
+                },
+                onQueueClick = {
+                    navController.navigate(PulseRoute.DiagnosticsQueue.route)
+                },
+                onConflictDebugClick = {
+                    navController.navigate(PulseRoute.DiagnosticsConflicts.route)
+                }
             )
         }
     }
