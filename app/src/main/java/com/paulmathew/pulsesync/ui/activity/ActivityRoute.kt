@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.paulmathew.pulsesync.model.activity.ActivityEvent
 import com.paulmathew.pulsesync.model.activity.ActivityEventType
 import com.paulmathew.pulsesync.model.activity.ActivityFeedUiState
+import com.paulmathew.pulsesync.ui.components.NoActivityEmptyState
 import com.paulmathew.pulsesync.ui.components.PulsePressable
 import com.paulmathew.pulsesync.ui.components.PulseSurface
 import com.paulmathew.pulsesync.ui.components.PulseSurfaceTone
@@ -80,8 +81,11 @@ fun ActivityScreen(
 
         if (state.isEmpty) {
             item {
-                ActivityEmptyState()
-            }
+                NoActivityEmptyState(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = PulseThemeTokens.spacing.xxl)
+                )            }
         } else {
             activitySection("Today", state.today)
             activitySection("Yesterday", state.yesterday)
