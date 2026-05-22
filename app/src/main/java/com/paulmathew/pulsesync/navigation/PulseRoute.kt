@@ -27,6 +27,12 @@ sealed class PulseRoute(
             return "editor/$documentId"
         }
     }
+    data object DiagnosticsHome : PulseRoute("diagnostics")
+    data object DiagnosticsNetwork : PulseRoute("diagnostics/network")
+    data object DiagnosticsObservability : PulseRoute("diagnostics/observability")
+    data object DiagnosticsRuntimeEvents : PulseRoute("diagnostics/runtime-events")
+    data object DiagnosticsQueue : PulseRoute("diagnostics/queue")
+    data object DiagnosticsConflicts : PulseRoute("diagnostics/conflicts")
 
 
 

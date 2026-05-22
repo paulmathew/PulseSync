@@ -24,6 +24,7 @@ import com.paulmathew.pulsesync.ui.queue.QueueRoute
 import com.paulmathew.pulsesync.ui.simulation.NetworkSimulationRoute
 import com.paulmathew.pulsesync.ui.timeline.TimelineRoute
 import com.paulmathew.pulsesync.ui.home.WorkspaceHomeRoute
+import com.paulmathew.pulsesync.ui.profile.ProfileRoute
 import com.paulmathew.pulsesync.ui.theme.PulseColors
 
 
@@ -63,8 +64,11 @@ fun PulseNavGraph(
         }
 
         composable(PulseRoute.Profile.route) {
-            PlaceholderRoute(title = "Profile\n" +
-                    "Sync settings and diagnostics will live here.")
+            ProfileRoute(
+                onDeveloperDiagnosticsClick = {
+                    navController.navigate(PulseRoute.DiagnosticsHome.route)
+                }
+            )
         }
 //        composable(PulseRoute.Editor.route) {
 //            EditorRoute(
