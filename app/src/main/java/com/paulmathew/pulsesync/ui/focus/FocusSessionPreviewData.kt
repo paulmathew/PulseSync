@@ -34,11 +34,28 @@ object FocusSessionPreviewData {
                     detail = "No scary network language.",
                     type = FocusItemType.Note,
                     syncStatus = SyncStatus.OfflinePending(1)
+                ),
+                FocusItem(
+                    id = "item-3",
+                    title = "Review sync confidence states",
+                    detail = "Keep status visible but never distracting.",
+                    type = FocusItemType.Task,
+                    syncStatus = SyncStatus.Syncing
+                ),
+                FocusItem(
+                    id = "item-4",
+                    title = "Capture launch risks",
+                    detail = "Note offline edge cases before the demo.",
+                    type = FocusItemType.Note,
+                    syncStatus = SyncStatus.Synced
                 )
+
             ),
             activity = listOf(
-                FocusActivity("a1", "Sarah joined the session", "Just now"),
-                FocusActivity("a2", "You added a focus task", "2m ago")
+                FocusActivity("a1", "Sarah is editing launch copy", "Just now"),
+                FocusActivity("a2", "Offline changes synced", "2m ago"),
+                FocusActivity("a3", "You added “Shape onboarding flow”", "5m ago"),
+                FocusActivity("a4", "Alex reviewed offline behavior", "12m ago")
             ),
             syncStatus = SyncStatus.Syncing
         )
