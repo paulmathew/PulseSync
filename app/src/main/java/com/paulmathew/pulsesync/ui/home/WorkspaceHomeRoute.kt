@@ -30,6 +30,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,10 +56,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.paulmathew.pulsesync.ui.components.PulsePressable
+import com.paulmathew.pulsesync.ui.components.WorkspaceCardSkeleton
 import com.paulmathew.pulsesync.ui.conflict.v2.ConflictResolutionPreviewData
 import com.paulmathew.pulsesync.ui.conflict.v2.ConflictResolutionSheet
 import com.paulmathew.pulsesync.ui.queue.v2.SyncQueueDrawer
 import com.paulmathew.pulsesync.ui.queue.v2.SyncQueuePreviewData
+import kotlinx.coroutines.delay
 
 @Composable
 fun WorkspaceHomeRoute(
@@ -71,6 +74,13 @@ fun WorkspaceHomeRoute(
     var conflictState by remember {
         mutableStateOf(ConflictResolutionPreviewData.default)
     }
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        delay(2000)
+        isLoading = false
+    }
+
     WorkspaceHomeScreen(
         state = WorkspaceHomePreviewData.defaultState,
         onFilterSelected = {},
@@ -83,8 +93,9 @@ fun WorkspaceHomeRoute(
             showConflictSheet = true
         },
         modifier = modifier,
-        onOfflineChangesClick = onOfflineChangesClick
-    )
+        onOfflineChangesClick = onOfflineChangesClick,
+        isLoading = isLoading,
+        )
 
     if (showQueueDrawer) {
         SyncQueueDrawer(
@@ -121,7 +132,9 @@ fun WorkspaceHomeScreen(
     onConflictClick: () -> Unit,
     modifier: Modifier = Modifier,
     onOfflineChangesClick: () -> Unit,
-) {
+    isLoading: Boolean = false,
+
+    ) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -168,14 +181,23 @@ fun WorkspaceHomeScreen(
             verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.md)
         ) {
 
-            items(
-                items = state.items,
-                key = { item -> item.id }
-            ) { item ->
-                WorkspaceCard(
-                    item = item,
-                    onClick = { onWorkspaceSelected(item) }
-                )
+            if (isLoading) {
+                items(
+                    count = 3,
+                    key = { index -> "workspace-skeleton-$index" }
+                ) {
+                    WorkspaceCardSkeleton()
+                }
+            } else {
+                items(
+                    items = state.items,
+                    key = { item -> item.id }
+                ) { item ->
+                    WorkspaceCard(
+                        item = item,
+                        onClick = { onWorkspaceSelected(item) }
+                    )
+                }
             }
 
             item {
