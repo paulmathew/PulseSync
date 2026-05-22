@@ -15,17 +15,21 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.paulmathew.pulsesync.model.miniapp.MiniAppType
+import com.paulmathew.pulsesync.model.workspace.CollaboratorTone
 import com.paulmathew.pulsesync.ui.activity.ActivityRoute
 import com.paulmathew.pulsesync.ui.conflict.ConflictResolutionRoute
 import com.paulmathew.pulsesync.ui.dashboard.DashboardRoute
 import com.paulmathew.pulsesync.ui.diagnostics.DiagnosticsHomeRoute
 import com.paulmathew.pulsesync.ui.diagnostics.DiagnosticsScreenScaffold
 import com.paulmathew.pulsesync.ui.editor.EditorRoute
+import com.paulmathew.pulsesync.ui.focus.FocusSessionRoute
 import com.paulmathew.pulsesync.ui.observability.ObservabilityRoute
 import com.paulmathew.pulsesync.ui.queue.QueueRoute
 import com.paulmathew.pulsesync.ui.simulation.NetworkSimulationRoute
 import com.paulmathew.pulsesync.ui.timeline.TimelineRoute
 import com.paulmathew.pulsesync.ui.home.WorkspaceHomeRoute
+import com.paulmathew.pulsesync.ui.miniapp.MiniAppsRoute
 import com.paulmathew.pulsesync.ui.offline.OfflineExperienceRoute
 import com.paulmathew.pulsesync.ui.profile.ProfileRoute
 import com.paulmathew.pulsesync.ui.shared.SharedRoute
@@ -176,6 +180,21 @@ fun PulseNavGraph(
         }
         composable(PulseRoute.Shared.route) {
             SharedRoute()
+        }
+        composable(PulseRoute.Create.route) {
+            MiniAppsRoute(
+                onMiniAppClick = { app ->
+                    when (app.type) {
+                        MiniAppType.FocusSession -> {
+                            navController.navigate(PulseRoute.FocusSession.route)
+                        }
+                        else -> Unit
+                    }
+                }
+            )
+        }
+        composable(PulseRoute.FocusSession.route) {
+            FocusSessionRoute()
         }
     }
 }

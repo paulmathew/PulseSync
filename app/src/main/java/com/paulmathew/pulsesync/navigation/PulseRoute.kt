@@ -35,6 +35,8 @@ sealed class PulseRoute(
     data object DiagnosticsConflicts : PulseRoute("diagnostics/conflicts")
     data object OfflineExperience : PulseRoute("offline_experience")
 
+    data object FocusSession : PulseRoute("mini_apps/focus_session")
+
 
 
 }
