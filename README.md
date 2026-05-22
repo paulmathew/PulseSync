@@ -14,7 +14,7 @@ PulseSync is not a CRUD sample and it is no longer presented as an infrastructur
 - Elegant conflict resolution
 - Realtime collaboration activity
 - Mini app platform architecture
-- 
+
 ## Why PulseSync Exists
 
 Over years of building realtime Android systems across unstable mobile environments, I noticed the same problem repeatedly:
@@ -40,7 +40,7 @@ The result is a product experience where edits feel instant, offline work feels 
 <p align="center">
   <img src="docs/screenshots/v2/workspace-feed.png" width="260" />
   <img src="docs/screenshots/v2/focus-session.png" width="260" />
-  <img src="docs/screenshots/v2/conflict-resolution.png" width="260" />
+  <img src="docs/screenshots/v2/conflict-resolution-v2.png" width="260" />
 </p>
 
 ## Product Principles
@@ -81,6 +81,22 @@ Shared Sync Foundation
 ├── Conflict handling
 └── Deterministic state reducers
 ```
+
+## Offline-First Flow
+
+```text
+User Action
+    ↓
+Instant Local Update
+    ↓
+Optimistic UI Render
+    ↓
+Background Sync
+    ↓
+Retry or Conflict Resolution
+```
+
+PulseSync keeps collaboration responsive by applying changes locally first, rendering the optimistic state immediately, and handling synchronization quietly in the background. If the network becomes unreliable, the user keeps working while PulseSync retries or asks for a calm resolution only when needed.
 
 ## Product Experience
 
@@ -170,7 +186,7 @@ The product stays calm. The engineering depth remains available.
 
 | Activity Feed | Sync Queue | Conflict Resolution |
 |---|---|---|
-| <img src="docs/screenshots/v2/activity-feed.png" width="260" /> | <img src="docs/screenshots/v2/sync-queue.png" width="260" /> | <img src="docs/screenshots/v2/conflict-resolution.png" width="260" /> |
+| <img src="docs/screenshots/v2/activity-feed.png" width="260" /> | <img src="docs/screenshots/v2/sync-queue.png" width="260" /> | <img src="docs/screenshots/v2/conflict-resolution-v2.png" width="260" /> |
 
 | Offline Experience |
 |---|
@@ -280,4 +296,3 @@ The goal is to study how resilient realtime systems can make mobile software fee
 PulseSync should feel like:
 
 > A beautiful collaborative workspace powered by serious synchronization engineering underneath.
-
