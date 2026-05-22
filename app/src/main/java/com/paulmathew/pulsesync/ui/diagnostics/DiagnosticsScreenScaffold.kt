@@ -49,7 +49,7 @@ fun DiagnosticsTopBar(
     modifier: Modifier = Modifier
 ) {
     androidx.compose.foundation.layout.Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().padding(top = PulseThemeTokens.spacing.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = onBackClick) {

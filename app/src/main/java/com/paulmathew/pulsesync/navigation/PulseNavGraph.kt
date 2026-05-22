@@ -169,7 +169,8 @@ fun PulseNavGraph(
                 onViewQueueClick = {
                     navController.popBackStack()
                     // If queue drawer is only on Home, this can stay fake for now.
-                }
+                },
+                onBackClick = { navController.popBackStack() }
             )
         }
     }
