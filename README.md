@@ -1,283 +1,283 @@
 # PulseSync
 
-PulseSync is a production-style Android infrastructure project that simulates offline-first mobile synchronization under unreliable network conditions.
+PulseSync is a premium offline-first collaborative Android experience built for unreliable mobile networks.
 
-It is not a consumer CRUD app. PulseSync is designed as an internal reliability and observability tool for understanding how sync systems behave across queues, retries, failures, conflicts, and network degradation.
+It explores a simple product idea: sophisticated synchronization systems should not make users think about synchronization. They should make collaboration feel calm, instant, and trustworthy, even when connectivity is unstable.
 
-The project is intended to demonstrate senior-level Android architecture, deterministic state management, and systems-thinking around distributed mobile behavior.
+PulseSync is not a CRUD sample and it is no longer presented as an infrastructure dashboard. It is a modern collaborative workspace powered by serious mobile systems engineering underneath.
 
-## What PulseSync Demonstrates
+## Highlights
 
-- Deterministic sync state transitions
-- Runtime-backed observability surfaces
-- Offline-first synchronization concepts
-- Retry and failure recovery modeling
-- Conflict detection and resolution flows
-- Network condition simulation
-- Immutable UI state
-- StateFlow-driven presentation
-- Modern Android architecture with Jetpack Compose, ViewModels, Navigation Compose, and Hilt
+- Offline-first collaborative editing
+- Optimistic local persistence
+- Calm synchronization UX
+- Elegant conflict resolution
+- Realtime collaboration activity
+- Mini app platform architecture
+- 
+## Why PulseSync Exists
 
-## Screenshots
+Over years of building realtime Android systems across unstable mobile environments, I noticed the same problem repeatedly:
 
-| Dashboard | Network Simulation | Queue |
-|---|---|---|
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Network Simulation](docs/screenshots/network-simulation.png) | ![Queue](docs/screenshots/queue.png) |
+Most mobile apps psychologically break the moment connectivity becomes unreliable.
 
-| Timeline | Observability | Conflict Resolution |
-|---|---|---|
-| ![Timeline](docs/screenshots/timeline.png) | ![Observability](docs/screenshots/observability.png) | ![Conflict Resolution](docs/screenshots/conflict-resolution.png) |
+Users lose confidence when they encounter:
 
-## Architecture Overview
+- blocking spinners
+- failed retries
+- disappearing edits
+- confusing sync states
+- aggressive error messaging
 
-PulseSync is organized around a deterministic runtime pipeline:
+The technical issue is often temporary. The emotional trust damage happens instantly.
+
+PulseSync explores a different direction:
+
+> What would a collaborative mobile product feel like if synchronization became emotionally invisible?
+
+The result is a product experience where edits feel instant, offline work feels safe, conflicts feel understandable, and synchronization stays mostly quiet unless the user needs clarity.
+
+<p align="center">
+  <img src="docs/screenshots/v2/workspace-feed.png" width="260" />
+  <img src="docs/screenshots/v2/focus-session.png" width="260" />
+  <img src="docs/screenshots/v2/conflict-resolution.png" width="260" />
+</p>
+
+## Product Principles
+
+**Calm Synchronization**  
+Sync state should reassure, not interrupt. PulseSync uses small indicators, soft labels, and subtle motion instead of blocking loaders or alarming banners.
+
+**Offline Confidence**  
+The product should keep working when the network disappears. Local changes remain visible, optimistic, and recoverable.
+
+**Trust Through Transparency**  
+Users should not need debug tools, but they should be able to understand what is happening. The sync queue drawer exposes pending, uploading, retrying, and synced changes in calm product language.
+
+**Invisible Infrastructure**  
+The synchronization engine is intentionally powerful, but the main experience stays focused on collaboration, editing, and flow.
+
+**Optimistic Interactions**  
+User actions apply immediately. Sync follows behind the experience instead of blocking it.
+
+**Realtime Resilience**  
+Realtime collaboration should survive mobile uncertainty: slow networks, offline sessions, retries, and version conflicts.
+
+## Product Model
 
 ```text
-SyncOperation
--> SyncStateReducer
--> FakeSyncOrchestrator
--> SyncRuntimeState
--> UI State Mappers
--> ViewModels
--> Compose Screens
+PulseSync Product
+├── Workspace Feed
+├── Focus Session Mini App
+├── Activity Feed
+├── Sync Queue
+├── Conflict Resolution
+└── Offline Experience
+
+Shared Sync Foundation
+├── Optimistic updates
+├── Offline continuation
+├── Retry orchestration
+├── Conflict handling
+└── Deterministic state reducers
 ```
 
-The sync engine is intentionally pure Kotlin. UI screens do not mutate sync state directly. They render immutable UI state and send user intents upward through callbacks. ViewModels translate those intents into runtime operations through `SyncOrchestrator`.
+## Product Experience
 
-## Core Layers
+### Workspace Feed
 
-### Sync Engine
+The workspace feed is the first product surface. It presents collaborative documents as calm, premium cards with collaborator avatars, sync confidence, and pending local change hints.
 
-The sync engine contains pure Kotlin models and deterministic transition logic.
+The emotional goal is confidence: users should feel their workspace is alive and protected, not waiting on a network request.
 
-Key types:
+Synchronization supports the feed through subtle status indicators, optimistic card state, and non-blocking loading skeletons.
 
-- `SyncOperation`
-- `SyncOperationStatus`
-- `SyncStateReducer`
-- `RetryPolicy`
-- `SyncFailureReason`
-- `SyncAttemptResult`
-- `SyncEngineEvent`
+### Focus Session Mini App
 
-The reducer is deterministic: given the same operation, attempt result, retry policy, and timestamp, it produces the same next state and event.
+Focus Session is the first PulseSync mini app: a lightweight collaborative workspace for shared tasks, notes, presence, and realtime activity.
 
-### Runtime
+It demonstrates how PulseSync can power focused product experiences without exposing infrastructure. Users see collaborators, shared cards, live activity, and calm sync feedback. The sync engine remains mostly invisible.
 
-The runtime is a fake in-memory orchestrator that simulates queue processing, retry scheduling, conflict creation, network conditions, and lifecycle events.
+The emotional goal is flow: a small team can keep working together even when the network is imperfect.
 
-Key types:
+### Activity Feed
 
-- `SyncOrchestrator`
-- `FakeSyncOrchestrator`
-- `SyncRuntimeState`
-- `NetworkSimulationRuntimeState`
-- `NetworkSyncOutcomePolicy`
+The Activity Feed replaces technical timeline logs with human-readable collaboration history.
 
-The runtime exposes observable state using `StateFlow<SyncRuntimeState>`.
+Instead of operation events, it shows moments:
 
-### UI Mapping
+- Sarah edited Design System
+- Project Aurora synced
+- Offline changes uploaded
+- Conflict resolved successfully
 
-Runtime state is transformed into screen-specific immutable UI state through pure mapper functions.
+The emotional goal is continuity: users can understand what changed without reading debug output.
 
-Examples:
+### Sync Queue Drawer
 
-- `toDashboardUiState`
-- `toTimelineUiState`
-- `toQueueUiState`
-- `toObservabilityUiState`
-- `toConflictUiState`
-- `toNetworkSimulationUiState`
+The sync queue drawer gives users transparent control without turning the product into a developer tool.
 
-This keeps Compose screens focused on rendering and avoids leaking runtime/domain models directly into UI layout logic.
+It groups work into calm states:
 
-### Presentation
+- Uploading
+- Pending
+- Retrying
+- Synced
 
-Compose screens render immutable UI state and expose event callbacks. ViewModels collect runtime state, apply mapper functions, and delegate user intents to `SyncOrchestrator`.
-
-The presentation layer uses:
-
-- Jetpack Compose
-- Material 3
-- Navigation Compose
-- Lifecycle-aware state collection
-- Hilt-injected ViewModels
-
-## Screens
-
-### Dashboard
-
-The Dashboard displays sync health, queue metrics, recent runtime events, and internal runtime controls.
-
-The runtime controls are intentionally exposed as internal tooling. They allow the user to start the next queued operation and apply the selected network profile to complete the active operation.
-
-### Timeline
-
-Timeline shows chronological sync lifecycle events, including:
-
-- operation started
-- operation synced
-- operation failed
-- retry scheduled
-
-Timeline filters allow viewing sync, retry, error, and conflict-related events.
-
-### Queue
-
-Queue displays pending, syncing, and failed operations. It includes an operation inspector that exposes debugging metadata such as operation id, method, resource path, status, attempt count, and retry timing.
-
-### Network Simulation
-
-Network Simulation allows selecting runtime network conditions such as:
-
-- Good Network
-- Slow Network
-- Poor Network
-- Packet Loss
-- Timeout
-- Offline
-
-The selected profile is stored in runtime state and can influence sync completion behavior.
-
-### Observability
-
-Observability derives operational metrics from runtime events, including:
-
-- success rate
-- total events
-- failure count
-- retry count
-- failure reasons
-
-This screen represents the reliability-monitoring side of PulseSync.
+The emotional goal is trust: when something is waiting, users can see that PulseSync has it handled.
 
 ### Conflict Resolution
 
-Conflict Resolution displays active sync conflicts, compares local and remote versions, and supports resolution strategies:
+Conflict resolution is designed as a premium collaborative decision flow, not an error screen.
 
-- Local Wins
-- Remote Wins
+PulseSync compares “Your Version” and “Remote Version,” explains that nothing was lost, and offers clear choices:
+
+- Keep Mine
+- Use Theirs
 - Merge
-- Manual Review
 
-Conflict resolution is backed by deterministic conflict models and runtime state.
+The emotional goal is control: conflicts become understandable and recoverable instead of scary.
 
-## Demo Flow
+### Offline Experience
 
-A useful demo path:
+The offline experience reassures users that work can continue.
 
-1. Open Network Simulation.
-2. Select `Timeout` or `Offline`.
-3. Open Dashboard.
-4. Tap `Start` to move the next queued operation into flight.
-5. Tap `Network` to complete the active operation using the selected network profile.
-6. Open Queue to inspect the failed operation.
-7. Open Timeline to view failure and retry events.
-8. Open Observability to see failure metrics update.
+It avoids failure-heavy language and instead communicates:
 
-This demonstrates the full runtime path:
+> You’re offline. No worries, keep working. Changes will sync when you’re back online.
+
+The emotional goal is resilience: the app should feel dependable even when the network is not.
+
+### Developer Diagnostics
+
+PulseSync still preserves deep engineering tooling, but it is intentionally separated from the primary product UX.
+
+Developer diagnostics live behind:
 
 ```text
-Network Profile
--> Sync Runtime
--> State Transition
--> Runtime Events
--> UI Mappers
--> ViewModels
--> Multiple Screens Update
+Profile -> Developer Diagnostics
 ```
 
-## Tech Stack
+This area contains the internal reliability surfaces: network simulation, raw queue inspection, runtime events, observability metrics, and conflict debugging.
+
+The product stays calm. The engineering depth remains available.
+
+## Screenshots & Demos
+
+| Workspace Feed | Mini Apps Launcher | Focus Session |
+|---|---|---|
+| <img src="docs/screenshots/v2/workspace-feed.png" width="260" /> | <img src="docs/screenshots/v2/mini-apps-launcher.png" width="260" /> | <img src="docs/screenshots/v2/focus-session.png" width="260" /> |
+
+| Activity Feed | Sync Queue | Conflict Resolution |
+|---|---|---|
+| <img src="docs/screenshots/v2/activity-feed.png" width="260" /> | <img src="docs/screenshots/v2/sync-queue.png" width="260" /> | <img src="docs/screenshots/v2/conflict-resolution.png" width="260" /> |
+
+| Offline Experience |
+|---|
+| <img src="docs/screenshots/v2/offline-experience.png" width="260" /> |
+
+### Demo Preview Placeholders
+
+- Product walkthrough GIF: _coming soon_
+- Focus Session interaction demo: _coming soon_
+- Offline and sync queue demo: _coming soon_
+- Conflict resolution demo: _coming soon_
+
+### Legacy Diagnostics Screens
+
+These screenshots show the internal diagnostics surfaces that now live behind Developer Diagnostics.
+
+| Queue Debug | Network Simulation | Observability |
+|---|---|---|
+| ![Queue Debug](docs/screenshots/queue.png) | ![Network Simulation](docs/screenshots/network-simulation.png) | ![Observability](docs/screenshots/observability.png) |
+
+| Runtime Events | Conflict Debugging |
+|---|---|
+| ![Runtime Events](docs/screenshots/timeline.png) | ![Conflict Debugging](docs/screenshots/conflict-resolution.png) |
+
+## Technical Foundation
+
+PulseSync is built with a modern Android stack and a state-driven architecture designed for offline-first behavior.
+
+Core technologies:
 
 - Kotlin
 - Jetpack Compose
 - Material 3
-- Coroutines
-- StateFlow
+- Coroutines and StateFlow
 - Navigation Compose
-- Lifecycle-aware Compose state collection
-- Hilt dependency injection
-- JUnit unit tests
+- Hilt
+- Reducer-driven state handling
+- Optimistic local updates
+- Retry orchestration
+- Conflict resolution models
 
-Room and WorkManager are intentionally deferred. They become relevant when persistence and background execution are introduced.
+The product UI is intentionally separated from synchronization runtime behavior. Screens render immutable state, while sync transitions are modeled through deterministic state reducers and observable runtime flows.
 
-## Design Direction
+This keeps the experience calm on the surface while preserving reliable synchronization behavior underneath.
 
-PulseSync uses a dark operational interface inspired by internal engineering tools such as Grafana, Datadog, and Android Studio Profiler.
+## Mini App Platform Direction
 
-The UI favors:
+PulseSync now supports lightweight collaborative mini apps powered by shared synchronization infrastructure.
 
-- dark graphite surfaces
-- restrained elevation
-- operational green accents
-- warning and error semantic colors
-- dense debugging-oriented layouts
-- state-first rendering
+The current mini app direction includes:
 
-The goal is operational clarity under failure, not consumer-style polish.
+- Focus Session
+- Meeting Notes
+- Shared Brainstorm
+- Offline Journal
+
+Focus Session is the first implemented sample. It demonstrates how a mini app can use shared product primitives: collaborator presence, optimistic local updates, sync confidence, activity history, and offline-safe interaction patterns.
+
+The long-term direction is a small platform of composable collaboration experiences, all powered by the same local-first synchronization system.
+
+## Engineering Depth
+
+PulseSync keeps serious synchronization engineering underneath the product experience:
+
+- deterministic sync state reduction
+- local-first operation modeling
+- retry and failure recovery behavior
+- conflict detection and resolution flows
+- internal diagnostics for runtime inspection
+
+These systems are intentionally secondary in the UX. They support the product without dominating it.
 
 ## Testing
 
-The project includes unit tests for:
-
-- retry policy behavior
-- deterministic sync state transitions
-- fake runtime orchestration
-- conflict resolution
-- runtime-to-UI state mapping
-- network-profile-driven sync outcomes
-
-Run tests with:
+Run unit tests:
 
 ```bash
 ./gradlew :app:testDebugUnitTest
 ```
 
-Build the debug app with:
+Build the debug app:
 
 ```bash
 ./gradlew :app:assembleDebug
 ```
 
-## Project Status
+The existing test coverage focuses on deterministic sync behavior, retry policies, runtime orchestration, conflict state mapping, and network-driven outcomes.
 
-PulseSync currently includes a fake in-memory runtime rather than persistent storage or background scheduling.
+## Future Vision
 
-Current capabilities:
+PulseSync is an exploration into trust-preserving mobile collaboration.
 
-- deterministic sync operation lifecycle
-- retry scheduling
-- runtime-backed Dashboard, Timeline, Queue, Network Simulation, Observability, and Conflict Resolution screens
-- network-profile-driven sync results
-- conflict creation and resolution flow
-- Hilt-backed runtime injection
+The next direction is focused on:
 
-Planned future phases may include:
+- durable local persistence
+- richer offline-first mini apps
+- stronger collaboration resilience
+- smarter conflict handling
+- more realistic realtime sync behavior
 
-- Room-backed durable operation queue
-- WorkManager-backed background sync execution
-- richer observability charts
-- persisted simulation profiles
-- operation detail history
-- more realistic packet loss and latency simulation
+The goal is not just to build an offline-first app.
 
-## Roadmap
+The goal is to study how resilient realtime systems can make mobile software feel calmer, more capable, and more trustworthy.
 
-PulseSync v1 focuses on deterministic sync behavior, runtime observability, and internal tooling screens using an in-memory fake runtime.
+## Positioning
 
-Future architecture phases:
+PulseSync should feel like:
 
-- Extract the pure sync engine into a standalone `:core:sync` module
-- Split runtime orchestration into dedicated runtime/data modules
-- Add Room-backed durable operation, event, and conflict storage
-- Add WorkManager-backed background sync execution
-- Add CI verification with unit tests and debug builds
-- Add static analysis with ktlint or detekt
-- Expand observability with richer charts and latency metrics
-- Add more realistic packet loss and latency simulation
+> A beautiful collaborative workspace powered by serious synchronization engineering underneath.
 
-## Portfolio Intent
-
-PulseSync is built to communicate Android architecture and reliability engineering judgment.
-
-The focus is not on implementing a consumer feature set. The focus is on showing how a mobile sync system can be modeled, observed, debugged, and evolved with deterministic state transitions and production-oriented boundaries.
