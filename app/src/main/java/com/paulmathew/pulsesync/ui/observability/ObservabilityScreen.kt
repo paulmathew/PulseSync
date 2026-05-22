@@ -50,7 +50,6 @@ fun ObservabilityScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        ObservabilityHeader()
 
         MetricGrid(state = state)
 

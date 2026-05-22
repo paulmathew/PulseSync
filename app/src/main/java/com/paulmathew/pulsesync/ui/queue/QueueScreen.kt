@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -78,13 +77,11 @@ fun QueueScreen(
         modifier = modifier
             .fillMaxSize()
             .background(GraphiteBackground)
-            .statusBarsPadding()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
             .verticalScroll(rememberScrollState())
         ,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        QueueHeader()
 
         QueueFilterStrip(
             filters = state.filters,
