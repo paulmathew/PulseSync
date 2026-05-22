@@ -28,6 +28,7 @@ import com.paulmathew.pulsesync.ui.timeline.TimelineRoute
 import com.paulmathew.pulsesync.ui.home.WorkspaceHomeRoute
 import com.paulmathew.pulsesync.ui.offline.OfflineExperienceRoute
 import com.paulmathew.pulsesync.ui.profile.ProfileRoute
+import com.paulmathew.pulsesync.ui.shared.SharedRoute
 import com.paulmathew.pulsesync.ui.theme.PulseColors
 
 
@@ -172,6 +173,9 @@ fun PulseNavGraph(
                 },
                 onBackClick = { navController.popBackStack() }
             )
+        }
+        composable(PulseRoute.Shared.route) {
+            SharedRoute()
         }
     }
 }
