@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.paulmathew.pulsesync.model.activity.ActivityEvent
 import com.paulmathew.pulsesync.model.activity.ActivityEventType
 import com.paulmathew.pulsesync.model.activity.ActivityFeedUiState
+import com.paulmathew.pulsesync.ui.components.PulsePressable
 import com.paulmathew.pulsesync.ui.components.PulseSurface
 import com.paulmathew.pulsesync.ui.components.PulseSurfaceTone
 import com.paulmathew.pulsesync.ui.sync.SyncStateIndicator
@@ -136,51 +137,55 @@ fun ActivityEventRow(
         horizontalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.md)
     ) {
         ActivityEventIcon(type = event.type)
-
-        PulseSurface(
-            modifier = Modifier.weight(1f),
-            tone = PulseSurfaceTone.Base,
-            shape = PulseThemeTokens.radii.large,
-            borderColor = PulseColors.BorderSubtle.copy(alpha = 0.55f),
-            contentPadding = PaddingValues(PulseThemeTokens.spacing.md)
+        PulsePressable(
+            onClick = {},
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.sm)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.xs)
+            PulseSurface(
+                modifier = Modifier.weight(1f),
+                tone = PulseSurfaceTone.Base,
+                shape = PulseThemeTokens.radii.large,
+                borderColor = PulseColors.BorderSubtle.copy(alpha = 0.55f),
+                contentPadding = PaddingValues(PulseThemeTokens.spacing.md)
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.sm)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top
                     ) {
-                        Text(
-                            text = event.title,
-                            color = PulseColors.TextPrimary,
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.xs)
+                        ) {
+                            Text(
+                                text = event.title,
+                                color = PulseColors.TextPrimary,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold
+                            )
 
-                        Text(
-                            text = event.subtitle,
-                            color = PulseColors.TextSecondary,
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                            Text(
+                                text = event.subtitle,
+                                color = PulseColors.TextSecondary,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+
+                        event.syncStatus?.let { status ->
+                            SyncStateIndicator(
+                                status = status,
+                                showLabel = false
+                            )
+                        }
                     }
 
-                    event.syncStatus?.let { status ->
-                        SyncStateIndicator(
-                            status = status,
-                            showLabel = false
-                        )
-                    }
+                    Text(
+                        text = event.timestampLabel,
+                        color = PulseColors.TextTertiary,
+                        style = MaterialTheme.typography.labelSmall
+                    )
                 }
-
-                Text(
-                    text = event.timestampLabel,
-                    color = PulseColors.TextTertiary,
-                    style = MaterialTheme.typography.labelSmall
-                )
             }
         }
     }

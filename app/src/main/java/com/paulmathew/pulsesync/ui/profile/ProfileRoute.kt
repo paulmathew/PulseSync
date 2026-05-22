@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.paulmathew.pulsesync.ui.components.PulsePressable
 import com.paulmathew.pulsesync.ui.components.PulseSurface
 import com.paulmathew.pulsesync.ui.components.PulseSurfaceTone
 import com.paulmathew.pulsesync.ui.theme.PulseColors
@@ -123,45 +124,49 @@ private fun ProfileActionRow(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     onClick: () -> Unit
 ) {
-    PulseSurface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        tone = PulseSurfaceTone.Base,
-        shape = PulseThemeTokens.radii.large,
-        borderColor = PulseColors.BorderSubtle,
-        contentPadding = PaddingValues(PulseThemeTokens.spacing.md)
+    PulsePressable(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.md),
-            verticalAlignment = Alignment.CenterVertically
+        PulseSurface(
+            modifier = Modifier
+                .fillMaxWidth(),
+            tone = PulseSurfaceTone.Base,
+            shape = PulseThemeTokens.radii.large,
+            borderColor = PulseColors.BorderSubtle,
+            contentPadding = PaddingValues(PulseThemeTokens.spacing.md)
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = PulseColors.TextSecondary
-            )
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    color = PulseColors.TextPrimary,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.md),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = PulseColors.TextSecondary
                 )
 
-                Text(
-                    text = subtitle,
-                    color = PulseColors.TextSecondary,
-                    style = MaterialTheme.typography.bodySmall
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = title,
+                        color = PulseColors.TextPrimary,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    Text(
+                        text = subtitle,
+                        color = PulseColors.TextSecondary,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                Icon(
+                    imageVector = Icons.Outlined.ChevronRight,
+                    contentDescription = null,
+                    tint = PulseColors.TextTertiary
                 )
             }
-
-            Icon(
-                imageVector = Icons.Outlined.ChevronRight,
-                contentDescription = null,
-                tint = PulseColors.TextTertiary
-            )
         }
     }
 }

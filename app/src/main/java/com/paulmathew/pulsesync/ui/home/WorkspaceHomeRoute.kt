@@ -54,6 +54,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.paulmathew.pulsesync.ui.components.PulsePressable
 import com.paulmathew.pulsesync.ui.conflict.v2.ConflictResolutionPreviewData
 import com.paulmathew.pulsesync.ui.conflict.v2.ConflictResolutionSheet
 import com.paulmathew.pulsesync.ui.queue.v2.SyncQueueDrawer
@@ -348,75 +349,78 @@ private fun WorkspaceCard(
     item: WorkspaceItem,
     onClick: () -> Unit
 ) {
-    PulseSurface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        tone = PulseSurfaceTone.Base,
-        shape = PulseThemeTokens.radii.large,
-        borderColor = PulseColors.BorderSubtle.copy(alpha = 0.65f),
-        tonalElevation = 2.dp,
-        contentPadding = PaddingValues(16.dp)
+    PulsePressable(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        PulseSurface(
+            modifier = Modifier.fillMaxWidth(),
+            tone = PulseSurfaceTone.Base,
+            shape = PulseThemeTokens.radii.large,
+            borderColor = PulseColors.BorderSubtle.copy(alpha = 0.65f),
+            tonalElevation = 2.dp,
+            contentPadding = PaddingValues(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Column(
-                    modifier = Modifier.weight(1f)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top
                 ) {
-                    Text(
-                        text = item.title,
-                        color = PulseColors.TextPrimary,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = item.title,
+                            color = PulseColors.TextPrimary,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        Text(
+                            text = item.lastModifiedLabel,
+                            color = PulseColors.TextTertiary,
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    SyncConfidenceDot(syncState = item.syncState)
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CollaboratorAvatarStack(
+                        collaborators = item.collaborators
                     )
 
-                    Text(
-                        text = item.lastModifiedLabel,
-                        color = PulseColors.TextTertiary,
-                        style = MaterialTheme.typography.labelSmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                    SyncStateIndicator(
+                        status = item.syncState.toSyncStatus(item.pendingLocalChanges)
                     )
                 }
 
-                SyncConfidenceDot(syncState = item.syncState)
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                CollaboratorAvatarStack(
-                    collaborators = item.collaborators
+                Text(
+                    text = item.preview,
+                    color = PulseColors.TextSecondary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Normal,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
 
-                SyncStateIndicator(
-                    status = item.syncState.toSyncStatus(item.pendingLocalChanges)
-                )
-            }
-
-            Text(
-                text = item.preview,
-                color = PulseColors.TextSecondary,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Normal,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            if (item.pendingLocalChanges > 0) {
-                PendingChangesSummary(
-                    pendingChanges = item.pendingLocalChanges
-                )
+                if (item.pendingLocalChanges > 0) {
+                    PendingChangesSummary(
+                        pendingChanges = item.pendingLocalChanges
+                    )
+                }
             }
         }
     }

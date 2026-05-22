@@ -20,11 +20,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.paulmathew.pulsesync.R
 import com.paulmathew.pulsesync.model.offline.OfflineChange
 import com.paulmathew.pulsesync.ui.components.PulseSurface
 import com.paulmathew.pulsesync.ui.components.PulseSurfaceTone
+import com.paulmathew.pulsesync.ui.diagnostics.DiagnosticsTopBar
 import com.paulmathew.pulsesync.ui.sync.SyncStateIndicator
 import com.paulmathew.pulsesync.ui.theme.PulseColors
 import com.paulmathew.pulsesync.ui.theme.PulseTheme
@@ -33,12 +36,14 @@ import com.paulmathew.pulsesync.ui.theme.PulseThemeTokens
 @Composable
 fun OfflineExperienceRoute(
     onViewQueueClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
 ) {
     OfflineExperienceScreen(
         state = OfflineExperiencePreviewData.default,
         onViewQueueClick = onViewQueueClick,
-        modifier = modifier
+        modifier = modifier,
+        onBackClick =onBackClick
     )
 }
 
@@ -46,8 +51,18 @@ fun OfflineExperienceRoute(
 fun OfflineExperienceScreen(
     state: OfflineExperienceUiState,
     onViewQueueClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
+) {  Column(
+    modifier = modifier
+        .fillMaxSize()
+        .background(PulseColors.BackgroundPrimary),
 ) {
+    DiagnosticsTopBar(
+        title = stringResource(id = R.string.app_name),
+        description = "",
+        onBackClick = onBackClick
+    )
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -67,6 +82,7 @@ fun OfflineExperienceScreen(
             changes = state.changes
         )
     }
+}
 }
 
 @Composable
@@ -206,7 +222,8 @@ private fun OfflineExperienceScreenPreview() {
     PulseTheme {
         OfflineExperienceScreen(
             state = OfflineExperiencePreviewData.default,
-            onViewQueueClick = {}
+            onViewQueueClick = {},
+            onBackClick = {}
         )
     }
 }
