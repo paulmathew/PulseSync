@@ -74,8 +74,6 @@ fun ConflictResolutionScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        ConflictHeader()
-
         if (state.conflicts.isEmpty()) {
             EmptyConflictState()
         } else {

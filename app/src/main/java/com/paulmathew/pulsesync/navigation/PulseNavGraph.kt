@@ -19,6 +19,7 @@ import com.paulmathew.pulsesync.ui.activity.ActivityRoute
 import com.paulmathew.pulsesync.ui.conflict.ConflictResolutionRoute
 import com.paulmathew.pulsesync.ui.dashboard.DashboardRoute
 import com.paulmathew.pulsesync.ui.diagnostics.DiagnosticsHomeRoute
+import com.paulmathew.pulsesync.ui.diagnostics.DiagnosticsScreenScaffold
 import com.paulmathew.pulsesync.ui.editor.EditorRoute
 import com.paulmathew.pulsesync.ui.observability.ObservabilityRoute
 import com.paulmathew.pulsesync.ui.queue.QueueRoute
@@ -55,13 +56,17 @@ fun PulseNavGraph(
         }
 
         composable(PulseRoute.Create.route) {
-            PlaceholderRoute(title = "Create\n" +
-                    "New workspace actions are coming next.")
+            PlaceholderRoute(
+                title = "Create\n" +
+                        "New workspace actions are coming next."
+            )
         }
 
         composable(PulseRoute.Shared.route) {
-            PlaceholderRoute(title = "Shared\n" +
-                    "Collaborative spaces will appear here.")
+            PlaceholderRoute(
+                title = "Shared\n" +
+                        "Collaborative spaces will appear here."
+            )
         }
 
         composable(PulseRoute.Profile.route) {
@@ -86,6 +91,9 @@ fun PulseNavGraph(
         }
         composable(PulseRoute.DiagnosticsHome.route) {
             DiagnosticsHomeRoute(
+                onBackClick = {
+                    navController.popBackStack()
+                },
                 onNetworkClick = {
                     navController.navigate(PulseRoute.DiagnosticsNetwork.route)
                 },
@@ -102,6 +110,55 @@ fun PulseNavGraph(
                     navController.navigate(PulseRoute.DiagnosticsConflicts.route)
                 }
             )
+        }
+
+        composable(PulseRoute.DiagnosticsNetwork.route) {
+            DiagnosticsScreenScaffold(
+                title = "Network Simulation",
+                description = "Test unreliable network behavior against the sync pipeline.",
+                onBackClick = { navController.popBackStack() }
+            ) {
+                NetworkSimulationRoute()
+            }
+        }
+
+        composable(PulseRoute.DiagnosticsObservability.route) {
+            DiagnosticsScreenScaffold(
+                title = "Observability Metrics",
+                description = "Review sync health, success rates, and retry behavior.",
+                onBackClick = { navController.popBackStack() }
+            ) {
+                ObservabilityRoute()
+            }
+        }
+
+        composable(PulseRoute.DiagnosticsRuntimeEvents.route) {
+            DiagnosticsScreenScaffold(
+                title = "Runtime Events",
+                description = "Inspect low-level synchronization state transitions.",
+                onBackClick = { navController.popBackStack() }
+            ) {
+                TimelineRoute()
+            }
+        }
+
+        composable(PulseRoute.DiagnosticsQueue.route) {
+            DiagnosticsScreenScaffold(
+                title = "Raw Operation Queue",
+                description = "View queued, pending, syncing, and failed operations.",
+                onBackClick = { navController.popBackStack() }
+            ) {
+                QueueRoute()
+            }
+        }
+        composable(PulseRoute.DiagnosticsConflicts.route) {
+            DiagnosticsScreenScaffold(
+                title = "Conflict Debugging",
+                description = "Inspect divergent versions and resolution state.",
+                onBackClick = { navController.popBackStack() }
+            ) {
+                ConflictResolutionRoute()
+            }
         }
     }
 }

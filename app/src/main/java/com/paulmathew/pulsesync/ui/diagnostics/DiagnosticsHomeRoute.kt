@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.ChevronRight
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.outlined.CloudQueue
 import androidx.compose.material.icons.outlined.Route
 import androidx.compose.material.icons.outlined.SettingsEthernet
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,20 +40,23 @@ fun DiagnosticsHomeRoute(
     onObservabilityClick: () -> Unit,
     onQueueClick: () -> Unit,
     onConflictDebugClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
 ) {
-    DiagnosticsHomeScreen(
-        onNetworkClick = onNetworkClick,
-        onRuntimeEventsClick = onRuntimeEventsClick,
-        onObservabilityClick = onObservabilityClick,
-        onQueueClick = onQueueClick,
-        onConflictDebugClick = onConflictDebugClick,
-        modifier = modifier
-    )
+        DiagnosticsHomeScreen(
+            onNetworkClick = onNetworkClick,
+            onRuntimeEventsClick = onRuntimeEventsClick,
+            onObservabilityClick = onObservabilityClick,
+            onQueueClick = onQueueClick,
+            onConflictDebugClick = onConflictDebugClick,
+            modifier = modifier,
+            onBackClick = onBackClick
+        )
 }
 
 @Composable
 fun DiagnosticsHomeScreen(
+    onBackClick: () -> Unit,
     onNetworkClick: () -> Unit,
     onRuntimeEventsClick: () -> Unit,
     onObservabilityClick: () -> Unit,
@@ -62,59 +67,55 @@ fun DiagnosticsHomeScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(PulseColors.BackgroundPrimary)
-            .padding(PulseThemeTokens.spacing.lg),
-        verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.lg)
+            .background(PulseColors.BackgroundPrimary),
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.xs)) {
-            Text(
-                text = "Developer Diagnostics",
-                color = PulseColors.TextPrimary,
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold
+        DiagnosticsTopBar(
+            title = "Developer Diagnostics",
+            description = "Internal tools for inspecting synchronization behavior.",
+            onBackClick = onBackClick
+        )
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(PulseColors.BackgroundPrimary)
+                .padding(PulseThemeTokens.spacing.lg),
+            verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.lg)
+        ) {
+            DiagnosticsRow(
+                title = "Network Simulation",
+                subtitle = "Test offline, timeout, slow, and unreliable network behavior.",
+                icon = Icons.Outlined.SettingsEthernet,
+                onClick = onNetworkClick
             )
 
-            Text(
-                text = "Internal tools for inspecting synchronization behavior.",
-                color = PulseColors.TextSecondary,
-                style = MaterialTheme.typography.bodyMedium
+            DiagnosticsRow(
+                title = "Runtime Events",
+                subtitle = "Inspect low-level synchronization state transitions.",
+                icon = Icons.Outlined.Route,
+                onClick = onRuntimeEventsClick
+            )
+
+            DiagnosticsRow(
+                title = "Observability Metrics",
+                subtitle = "Review sync health, success rates, and retry behavior.",
+                icon = Icons.Outlined.Analytics,
+                onClick = onObservabilityClick
+            )
+
+            DiagnosticsRow(
+                title = "Raw Operation Queue",
+                subtitle = "View queued, pending, syncing, and failed operations.",
+                icon = Icons.Outlined.CloudQueue,
+                onClick = onQueueClick
+            )
+
+            DiagnosticsRow(
+                title = "Conflict Debugging",
+                subtitle = "Inspect divergent versions and resolution state.",
+                icon = Icons.Outlined.BugReport,
+                onClick = onConflictDebugClick
             )
         }
-
-        DiagnosticsRow(
-            title = "Network Simulation",
-            subtitle = "Test offline, timeout, slow, and unreliable network behavior.",
-            icon = Icons.Outlined.SettingsEthernet,
-            onClick = onNetworkClick
-        )
-
-        DiagnosticsRow(
-            title = "Runtime Events",
-            subtitle = "Inspect low-level synchronization state transitions.",
-            icon = Icons.Outlined.Route,
-            onClick = onRuntimeEventsClick
-        )
-
-        DiagnosticsRow(
-            title = "Observability Metrics",
-            subtitle = "Review sync health, success rates, and retry behavior.",
-            icon = Icons.Outlined.Analytics,
-            onClick = onObservabilityClick
-        )
-
-        DiagnosticsRow(
-            title = "Raw Operation Queue",
-            subtitle = "View queued, pending, syncing, and failed operations.",
-            icon = Icons.Outlined.CloudQueue,
-            onClick = onQueueClick
-        )
-
-        DiagnosticsRow(
-            title = "Conflict Debugging",
-            subtitle = "Inspect divergent versions and resolution state.",
-            icon = Icons.Outlined.BugReport,
-            onClick = onConflictDebugClick
-        )
     }
 }
 
@@ -177,7 +178,8 @@ private fun DiagnosticsHomeScreenPreview() {
             onRuntimeEventsClick = {},
             onObservabilityClick = {},
             onQueueClick = {},
-            onConflictDebugClick = {}
+            onConflictDebugClick = {},
+            onBackClick = {}
         )
     }
 }
