@@ -148,6 +148,7 @@ fun FocusSessionScreen(
         }
     }
 }
+
 @Composable
 private fun FocusSessionHeader(
     state: FocusSessionUiState
@@ -205,8 +206,10 @@ private fun FocusDraftComposer(
         tone = PulseSurfaceTone.Base,
         shape = PulseThemeTokens.radii.large,
         borderColor = PulseColors.BorderSubtle,
-        contentPadding = PaddingValues(PulseThemeTokens.spacing.md)
-    ) {
+        contentPadding = PaddingValues(
+            horizontal = PulseThemeTokens.spacing.md,
+            vertical = PulseThemeTokens.spacing.sm
+        )    ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.sm),
             verticalAlignment = Alignment.CenterVertically
@@ -222,7 +225,7 @@ private fun FocusDraftComposer(
                 decorationBox = { innerTextField ->
                     if (value.isBlank()) {
                         Text(
-                            text = "Add a focus task or note...",
+                            text = "Capture an idea, task, or decision...",
                             color = PulseColors.TextTertiary,
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -255,7 +258,10 @@ private fun FocusItemCard(
             tone = PulseSurfaceTone.Base,
             shape = PulseThemeTokens.radii.large,
             borderColor = PulseColors.BorderSubtle.copy(alpha = 0.55f),
-            contentPadding = PaddingValues(PulseThemeTokens.spacing.md)
+            contentPadding = PaddingValues(
+                horizontal = PulseThemeTokens.spacing.md,
+                vertical = PulseThemeTokens.spacing.sm
+            )
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.md),
@@ -273,7 +279,7 @@ private fun FocusItemCard(
 
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(PulseThemeTokens.spacing.xs)
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     Text(
                         text = item.title,
@@ -342,10 +348,10 @@ private fun FocusPresenceRow(
         PresencePulseDot()
 
         Text(
-            text = "$activeName $action",
+            "$activeName is quietly editing",
             color = PulseColors.TextSecondary,
             style = MaterialTheme.typography.bodySmall,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Normal
         )
     }
 }
@@ -355,8 +361,8 @@ private fun PresencePulseDot() {
     val transition = rememberInfiniteTransition(label = "PresencePulse")
 
     val alpha by transition.animateFloat(
-        initialValue = 0.35f,
-        targetValue = 1f,
+        initialValue = 0.45f,
+        targetValue = 0.85f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 1200),
             repeatMode = RepeatMode.Reverse
@@ -366,7 +372,7 @@ private fun PresencePulseDot() {
 
     Box(
         modifier = Modifier
-            .size(8.dp)
+            .size(6.dp)
             .alpha(alpha)
             .background(
                 color = PulseColors.TrustGreen,
@@ -386,9 +392,9 @@ private fun FocusActivityRow(
         Box(
             modifier = Modifier
                 .padding(top = 6.dp)
-                .size(7.dp)
+                .size(5.dp)
                 .background(
-                    color = PulseColors.AccentPrimary.copy(alpha = 0.8f),
+                    color = PulseColors.AccentPrimary.copy(alpha = 0.55f),
                     shape = PulseThemeTokens.radii.full
                 )
         )
@@ -400,17 +406,18 @@ private fun FocusActivityRow(
                 text = event.message,
                 color = PulseColors.TextSecondary,
                 style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Normal
             )
 
             Text(
                 text = event.timestampLabel,
-                color = PulseColors.TextTertiary,
+                color = PulseColors.TextTertiary.copy(alpha = 0.75f),
                 style = MaterialTheme.typography.labelSmall
             )
         }
     }
 }
+
 @Preview
 @Composable
 private fun FocusSessionScreenPreview() {
